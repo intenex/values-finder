@@ -1,0 +1,105 @@
+Create a web application for a Values Card Sort exercise targeting meditation practitioners and changemakers. This app should help users identify their top 10 personal values through a series of comparative choices.
+
+[App Requirements section as before...]
+
+Values Data:
+Use the following 83 standard values from Miller's Values Card Sort plus the 10 additional values for meditators and changemakers:
+
+Standard Values:
+1. ACCEPTANCE: to be accepted as I am
+2. ACCURACY: to be accurate in my opinions and beliefs
+3. ACHIEVEMENT: to have important accomplishments
+4. ADVENTURE: to have new and exciting experiences
+5. ATTRACTIVENESS: to be physically attractive
+6. AUTHORITY: to be in charge of and responsible for others
+7. AUTONOMY: to be self-determined and independent
+8. BEAUTY: to appreciate beauty around me
+9. CARING: to take care of others
+10. CHALLENGE: to take on difficult tasks and problems
+11. CHANGE: to have a life full of change and variety
+12. COMFORT: to have a pleasant and comfortable life
+13. COMMITMENT: to make enduring, meaningful commitments
+14. COMPASSION: to feel and act on concern for others
+15. CONTRIBUTION: to make a lasting contribution in the world
+16. COOPERATION: to work collaboratively with others
+17. COURTESY: to be considerate and polite toward others
+18. CREATIVITY: to have new and original ideas
+19. DEPENDABILITY: to be reliable and trustworthy
+20. DUTY: to carry out my duties and obligations
+21. ECOLOGY: to live in harmony with the environment
+22. EXCITEMENT: to have a life full of thrills and stimulation
+23. FAITHFULNESS: to be loyal and true in relationships
+24. FAME: to be known and recognized
+25. FAMILY: to have a happy, loving family
+26. FITNESS: to be physically fit and strong
+27. FLEXIBILITY: to adjust to new circumstances easily
+28. FORGIVENESS: to be forgiving of others
+29. FRIENDSHIP: to have close, supportive friends
+30. FUN: to play and have fun
+31. GENEROSITY: to give what I have to others
+32. GENUINENESS: to act in a manner that is true to who I am
+33. GOD'S WILL: to seek and obey the will of God
+34. GROWTH: to keep changing and growing
+35. HEALTH: to be physically well and healthy
+36. HELPFULNESS: to be helpful to others
+37. HONESTY: to be honest and truthful
+38. HOPE: to maintain a positive and optimistic outlook
+39. HUMILITY: to be modest and unassuming
+40. HUMOR: to see the humorous side of myself and the world
+41. INDEPENDENCE: to be free from dependence on others
+42. INDUSTRY: to work hard and well at my life tasks
+43. INNER PEACE: to experience personal peace
+44. INTIMACY: to share my innermost experiences with others
+45. JUSTICE: to promote fair and equal treatment for all
+46. KNOWLEDGE: to learn and contribute valuable knowledge
+47. LEISURE: to take time to relax and enjoy
+48. LOVED: to be loved by those close to me
+49. LOVING: to give love to others
+50. MASTERY: to be competent in my everyday activities
+51. MINDFULNESS: to live conscious and mindful of the present moment
+52. MODERATION: to avoid excesses and find a middle ground
+53. MONOGAMY: to have one close, loving relationship
+54. NON-CONFORMITY: to question and challenge authority and norms
+55. NURTURANCE: to take care of and nurture others
+56. OPENNESS: to be open to new experiences, ideas, and options
+57. ORDER: to have a life that is well-ordered and organized
+58. PASSION: to have deep feelings about ideas, activities, or people
+59. PLEASURE: to feel good
+60. POPULARITY: to be well-liked by many people
+61. POWER: to have control over others
+62. PURPOSE: to have meaning and direction in my life
+63. RATIONALITY: to be guided by reason and logic
+64. REALISM: to see and act realistically and practically
+65. RESPONSIBILITY: to make and carry out responsible decisions
+66. RISK: to take risks and chances
+67. ROMANCE: to have intense, exciting love in my life
+68. SELF-ACCEPTANCE: to accept myself as I am
+69. SAFETY: to be safe and secure
+70. SELF-CONTROL: to be disciplined in my own actions
+71. SELF-ESTEEM: to feel good about myself
+72. SELF-KNOWLEDGE: to have a deep and honest understanding of myself
+73. SERVICE: to be of service to others
+74. SEXUALITY: to have an active and satisfying sex life
+75. SIMPLICITY: to live life simply, with minimal needs
+76. SOLITUDE: to have time and space where I can be apart from others
+77. SPIRITUALITY: to grow and mature spiritually
+78. STABILITY: to have a life that stays fairly consistent
+79. TOLERANCE: to accept and respect those who differ from me
+80. TRADITION: to follow respected patterns of the past
+81. VIRTUE: to live a morally pure and excellent life
+82. WEALTH: to have plenty of money
+83. WORLD PEACE: to work to promote peace in the world
+
+Additional Values for Meditators and Changemakers:
+84. PRESENCE: to be fully engaged in the current moment
+85. EMOTIONAL INTELLIGENCE: to understand and work skillfully with my emotions
+86. CATALYST: to initiate positive change in systems and communities
+87. INTEGRITY: to align my actions with my deepest values
+88. TRANSMISSION: to share my spiritual experience to benefit others
+89. VULNERABILITY: to be open about my true feelings and experiences
+90. IMPACT: to create lasting positive change in the world
+91. EQUANIMITY: to maintain balance amid life's ups and downs
+92. COMMUNITY: to be part of a supportive growth-oriented group
+93. AUTHENTICITY: to live in alignment with my true nature
+
+[Technical Specifications section as before...]
