@@ -1,0 +1,277 @@
+// Enhanced Values Sorting Algorithm with Survey Design Principles
+function createAdvancedValueSortingAlgorithm() {
+  // Data structures 
+  const valueScores = {};           // Track scores for each value
+  const comparisonHistory = {};     // Track which pairs have been compared
+  const presentationCounts = {};    // Track how many times each value has been shown
+  const undecidedPairs = [];        // Track pairs the user couldn't decide between
+  const valueRelationships = {};    // Track relationships between values
+  let roundCount = 0;               // Track comparison rounds
+  
+  // Initialize values
+  function initializeValues(allValues) {
+    allValues.forEach(value => {
+      valueScores[value.id] = 0;
+      presentationCounts[value.id] = 0;
+      valueRelationships[value.id] = new Set(); // Track related values
+    });
+    return [...allValues];
+  }
+  
+  // Comparison key helper
+  function getComparisonKey(id1, id2) {
+    return id1 < id2 ? `${id1}-${id2}` : `${id2}-${id1}`;
+  }
+  
+  // Check if pair has been compared
+  function haveBeenCompared(id1, id2) {
+    return comparisonHistory[getComparisonKey(id1, id2)] === true;
+  }
+  
+  // Mark as compared
+  function markAsCompared(id1, id2) {
+    comparisonHistory[getComparisonKey(id1, id2)] = true;
+  }
+  
+  // Handle user indecision between values
+  function handleUndecided(value1, value2) {
+    // Record that these values seem related/equally important
+    valueRelationships[value1.id].add(value2.id);
+    valueRelationships[value2.id].add(value1.id);
+    
+    // Add to undecided pairs
+    undecidedPairs.push([value1, value2]);
+    
+    // Mark as compared so we don't show this exact pair again
+    markAsCompared(value1.id, value2.id);
+    
+    // Instead of scheduling these exact values again, we'll prioritize
+    // comparing them against other values
+  }
+  
+  // Get the next pair to compare, using survey design principles
+  function getNextPair(activeValues) {
+    if (activeValues.length < 2) return null;
+    
+    // STRATEGY 1: If we have undecided pairs, compare those values against others
+    if (undecidedPairs.length > 0) {
+      const [value1, value2] = undecidedPairs.shift(); // Get oldest undecided pair
+      
+      // Find values that haven't been compared to either of these yet
+      const candidates = activeValues.filter(v => 
+        !haveBeenCompared(v.id, value1.id) && 
+        !haveBeenCompared(v.id, value2.id) &&
+        v.id !== value1.id && 
+        v.id !== value2.id
+      );
+      
+      if (candidates.length > 0) {
+        // Pick the least presented candidate
+        candidates.sort((a, b) => presentationCounts[a.id] - presentationCounts[b.id]);
+        const candidateValue = candidates[0];
+        
+        // Randomly pick one of the previously undecided values to compare
+        const valueToCompare = Math.random() < 0.5 ? value1 : value2;
+        
+        // Track presentation and mark as compared
+        markAsCompared(valueToCompare.id, candidateValue.id);
+        presentationCounts[valueToCompare.id]++;
+        presentationCounts[candidateValue.id]++;
+        roundCount++;
+        
+        return [valueToCompare, candidateValue];
+      }
+    }
+    
+    // STRATEGY 2: Balance between exploration and refinement
+    // As we progress, focus more on comparing high-scoring values
+    const explorationThreshold = Math.max(0.9 - (roundCount / 50), 0.5);
+    
+    if (Math.random() > explorationThreshold) {
+      // REFINEMENT: Compare high-scoring values with each other
+      const topValues = getTopContenders(activeValues, 20);
+      
+      if (topValues.length >= 2) {
+        // Find pairs of top values that haven't been compared
+        for (let i = 0; i < topValues.length; i++) {
+          for (let j = i + 1; j < topValues.length; j++) {
+            if (!haveBeenCompared(topValues[i].id, topValues[j].id)) {
+              markAsCompared(topValues[i].id, topValues[j].id);
+              presentationCounts[topValues[i].id]++;
+              presentationCounts[topValues[j].id]++;
+              roundCount++;
+              return [topValues[i], topValues[j]];
+            }
+          }
+        }
+      }
+    }
+    
+    // STRATEGY 3: General exploration using anti-bias techniques
+    // Use block randomization to ensure balance
+    const blockSize = Math.min(10, activeValues.length);
+    const block = [];
+    
+    // Create a block of least-presented values
+    const sortedByPresentation = [...activeValues].sort((a, b) => 
+      presentationCounts[a.id] - presentationCounts[b.id]
+    );
+    
+    for (let i = 0; i < blockSize; i++) {
+      if (i < sortedByPresentation.length) {
+        block.push(sortedByPresentation[i]);
+      }
+    }
+    
+    // Shuffle the block to prevent sequence effects
+    for (let i = block.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [block[i], block[j]] = [block[j], block[i]];
+    }
+    
+    // Find first valid pair in the block
+    for (let i = 0; i < block.length; i++) {
+      for (let j = i + 1; j < block.length; j++) {
+        if (!haveBeenCompared(block[i].id, block[j].id)) {
+          markAsCompared(block[i].id, block[j].id);
+          presentationCounts[block[i].id]++;
+          presentationCounts[block[j].id]++;
+          roundCount++;
+          return [block[i], block[j]];
+        }
+      }
+    }
+    
+    // If we've compared all possible pairs within our strategies,
+    // check if we have enough data to finalize
+    return null;
+  }
+  
+  // Record a selection
+  function recordSelection(selectedId, rejectedId) {
+    valueScores[selectedId] += 1;
+    valueScores[rejectedId] -= 1;
+  }
+  
+  // Get top contenders
+  function getTopContenders(values, count) {
+    return [...values]
+      .sort((a, b) => valueScores[b.id] - valueScores[a.id])
+      .slice(0, count);
+  }
+  
+  // Determine if we should finalize
+  function shouldFinalize(activeValues) {
+    // Finalize if we've done at least 25 comparisons and either:
+    // 1. We can clearly identify top 10 values (significant score difference)
+    // 2. We've done at least 45 rounds
+    if (roundCount < 25) return false;
+    
+    if (roundCount >= 45) return true;
+    
+    // Check if there's a clear separation between top 10 and rest
+    const sortedByScore = [...activeValues].sort((a, b) => 
+      valueScores[b.id] - valueScores[a.id]
+    );
+    
+    if (sortedByScore.length < 11) return true;
+    
+    // Check if there's a significant gap between 10th and 11th
+    const score10 = valueScores[sortedByScore[9].id];
+    const score11 = valueScores[sortedByScore[10].id];
+    
+    return (score10 - score11) >= 2; // Clear separation
+  }
+  
+  // Get final top values, accounting for strong relationships
+  function getFinalTopValues(allValues) {
+    // First get top values based on scores
+    const topByScore = getTopContenders(allValues, 15);
+    
+    // Look for closely related pairs in the top 15
+    const valuePairs = [];
+    const processedIds = new Set();
+    
+    for (let i = 0; i < topByScore.length; i++) {
+      if (processedIds.has(topByScore[i].id)) continue;
+      
+      const currentId = topByScore[i].id;
+      let foundPair = false;
+      
+      // Check if this value has any strong relationships in the top 15
+      for (let j = i + 1; j < topByScore.length; j++) {
+        const otherId = topByScore[j].id;
+        if (processedIds.has(otherId)) continue;
+        
+        // If these values are related and both in top 15
+        if (valueRelationships[currentId].has(otherId)) {
+          // Create a pair
+          valuePairs.push({
+            type: 'pair',
+            ids: [currentId, otherId],
+            values: [topByScore[i], topByScore[j]],
+            combinedScore: valueScores[currentId] + valueScores[otherId]
+          });
+          
+          processedIds.add(currentId);
+          processedIds.add(otherId);
+          foundPair = true;
+          break;
+        }
+      }
+      
+      // If no pair found, keep as individual
+      if (!foundPair) {
+        valuePairs.push({
+          type: 'single',
+          ids: [currentId],
+          values: [topByScore[i]],
+          combinedScore: valueScores[currentId]
+        });
+        processedIds.add(currentId);
+      }
+    }
+    
+    // Sort the pairs/singles by combined score
+    valuePairs.sort((a, b) => b.combinedScore - a.combinedScore);
+    
+    // Take top entries up to 10 values total (counting pairs as 2)
+    const finalSelection = [];
+    let valueCount = 0;
+    
+    for (const entry of valuePairs) {
+      if (valueCount + entry.ids.length <= 10) {
+        finalSelection.push(entry);
+        valueCount += entry.ids.length;
+      } else {
+        break;
+      }
+    }
+    
+    return {
+      topValues: finalSelection.flatMap(entry => entry.values),
+      valuePairs: finalSelection.filter(entry => entry.type === 'pair')
+    };
+  }
+  
+  // Public API
+  return {
+    initializeValues,
+    getNextPair,
+    recordSelection,
+    handleUndecided,
+    shouldFinalize,
+    getFinalTopValues,
+    getComparisonStats: () => ({
+      roundCount,
+      comparedPairs: Object.keys(comparisonHistory).length,
+      valueScores: {...valueScores},
+      undecidedCount: undecidedPairs.length,
+      relationshipGroups: Object.fromEntries(
+        Object.entries(valueRelationships).map(([id, relatedSet]) => 
+          [id, Array.from(relatedSet)]
+        )
+      )
+    })
+  };
+}

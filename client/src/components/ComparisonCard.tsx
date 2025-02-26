@@ -13,7 +13,7 @@ export function ComparisonCard({ value1, value2, onSelect, onUndecided }: Compar
   return (
     <div className="flex flex-col items-center gap-6">
       <h2 className="text-xl text-center">
-        If you could only have one of these values in your life...
+        If I had to choose a life with just one of these values, which would I choose?
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl">
         <Button
