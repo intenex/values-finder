@@ -1,0 +1,30 @@
+Please update the Values Card Sort application to include an AI questioning phase after the initial comparisons. This is an important enhancement to help users refine their selection more thoughtfully.
+
+After the user completes about 20-25 value comparisons and the system has identified their top 20-25 values, implement the following:
+
+1. AI Questioning Phase:
+   - Add a new screen that explains: "Now let's go deeper with a few questions about your values."
+   - Present 3-5 thought-provoking questions such as:
+     * "Which of these values would you be most willing to sacrifice in a difficult situation?"
+     * "Which of these values do you wish was more present in your community?"
+     * "If you could only pass one of these values to future generations, which would it be?"
+     * "Which value feels most authentically 'you' regardless of what others think?"
+     * "Which value, if lived fully, would have the greatest positive impact on your life?"
+   - For each question, allow the user to select from their shortlisted values
+   - Use these responses to further refine the final top 10 values (+2 points for values selected during this phase)
+
+2. Technical Implementation:
+   - Create a QuestioningPhase component between the comparison phase and the review phase
+   - Use the shortlisted values from the comparison phase as options for the questions
+   - Design an engaging interface for this phase that feels different from the comparison screens
+   - Ensure the algorithm properly weighs these responses when determining the final top 10
+
+3. UI/UX Considerations:
+   - Add a progress indicator showing they're in phase 2 of the process
+   - Make the questions appear one at a time
+   - Allow users to see which values they're choosing from (their top 20-25 from the first phase)
+   - Add meaningful transitions between questions
+
+This addition will make the values selection process more thoughtful and meaningful, helping users arrive at a more authentic set of top values.
+
+Please integrate this feature while maintaining the existing style and user flow of the application.
