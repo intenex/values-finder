@@ -1,9 +1,15 @@
 import { create } from 'zustand';
 import { Value, standardValues } from './values';
 
+interface ComparisonStats {
+  roundCount: number;
+  comparedPairs: number;
+}
+
 class ValueSortingAlgorithm {
   private values: Value[];
   private comparedPairs: { [key: string]: boolean } = {}; // Keep track of compared pairs
+  private roundCount: number = 0;
 
   constructor(values: Value[]) {
     this.values = values;
@@ -13,41 +19,65 @@ class ValueSortingAlgorithm {
     const key1 = Math.min(selectedId, rejectedId);
     const key2 = Math.max(selectedId, rejectedId);
     this.comparedPairs[`${key1}-${key2}`] = true;
+    this.roundCount++;
   }
 
   skipComparison(value1: Value, value2: Value): void {
     const key1 = Math.min(value1.id, value2.id);
     const key2 = Math.max(value1.id, value2.id);
     this.comparedPairs[`${key1}-${key2}`] = true;
+
+    // Schedule to ask again later by removing from history after delay
+    setTimeout(() => {
+      delete this.comparedPairs[`${key1}-${key2}`];
+    }, 5000); // Wait at least 5 seconds before showing again
   }
 
   getNextPair(values: Value[]): [Value, Value] | null {
-    for (let i = 0; i < values.length; i++) {
-      for (let j = i + 1; j < values.length; j++) {
-        const key1 = Math.min(values[i].id, values[j].id);
-        const key2 = Math.max(values[i].id, values[j].id);
-        if (!this.comparedPairs[`${key1}-${key2}`]) {
-          return [values[i], values[j]];
+    // Sort values by number of times they've been compared
+    const valueComparisons = values.map(value => ({
+      value,
+      comparisons: this.getValueComparisonCount(value.id)
+    }));
+
+    valueComparisons.sort((a, b) => a.comparisons - b.comparisons);
+
+    // Try to find a pair with the least compared values
+    for (const { value: value1 } of valueComparisons) {
+      for (const { value: value2 } of valueComparisons) {
+        if (value1.id >= value2.id) continue;
+
+        const key = `${value1.id}-${value2.id}`;
+        if (!this.comparedPairs[key]) {
+          return [value1, value2];
         }
       }
     }
     return null;
   }
 
+  private getValueComparisonCount(valueId: number): number {
+    return Object.keys(this.comparedPairs).filter(key => 
+      key.split('-').map(Number).includes(valueId)
+    ).length;
+  }
+
   shouldFinalize(values: Value[]): boolean {
-    for (let i = 0; i < values.length; i++) {
-      for (let j = i + 1; j < values.length; j++) {
-        const key1 = Math.min(values[i].id, values[j].id);
-        const key2 = Math.max(values[i].id, values[j].id);
-        if (!this.comparedPairs[`${key1}-${key2}`]) {
-          return false;
-        }
-      }
-    }
-    return true;
+    // Finalize if we've done at least 25 comparisons
+    if (this.roundCount >= 25) return true;
+
+    // Or if we've compared all possible pairs
+    const totalPossiblePairs = (values.length * (values.length - 1)) / 2;
+    return Object.keys(this.comparedPairs).length >= totalPossiblePairs;
+  }
+
+  getStats(): ComparisonStats {
+    return {
+      roundCount: this.roundCount,
+      comparedPairs: Object.keys(this.comparedPairs).length
+    };
   }
 }
-
 
 interface ValuesStore {
   values: Value[];
