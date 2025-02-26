@@ -6,9 +6,10 @@ interface ComparisonCardProps {
   value1: Value;
   value2: Value;
   onSelect: (selected: Value) => void;
+  onUndecided: (value1: Value, value2: Value) => void;
 }
 
-export function ComparisonCard({ value1, value2, onSelect }: ComparisonCardProps) {
+export function ComparisonCard({ value1, value2, onSelect, onUndecided }: ComparisonCardProps) {
   return (
     <div className="flex flex-col items-center gap-6">
       <h2 className="text-xl text-center">
@@ -37,6 +38,14 @@ export function ComparisonCard({ value1, value2, onSelect }: ComparisonCardProps
           </div>
         </Button>
       </div>
+
+      <Button 
+        variant="ghost"
+        onClick={() => onUndecided(value1, value2)}
+        className="mt-4"
+      >
+        Can't Decide
+      </Button>
     </div>
   );
 }

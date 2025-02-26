@@ -1,21 +1,29 @@
 import { create } from 'zustand';
 import { Value, standardValues } from './values';
 
+interface UndecidedPair {
+  value1: Value;
+  value2: Value;
+}
+
 interface ValuesStore {
   values: Value[];
   currentIndex: number;
   isComplete: boolean;
+  undecidedPairs: UndecidedPair[];
   addValue: (value: Value) => void;
   updateValue: (value: Value) => void;
   incrementScore: (id: number) => void;
   setRating: (id: number, rating: number) => void;
+  addUndecidedPair: (pair: UndecidedPair) => void;
   reset: () => void;
 }
 
 export const useValuesStore = create<ValuesStore>((set) => ({
-  values: standardValues,
+  values: [...standardValues].sort((a, b) => a.name.localeCompare(b.name)),
   currentIndex: 0,
   isComplete: false,
+  undecidedPairs: [],
 
   addValue: (value) => set((state) => ({
     values: [...state.values, value],
@@ -37,9 +45,14 @@ export const useValuesStore = create<ValuesStore>((set) => ({
     ),
   })),
 
+  addUndecidedPair: (pair) => set((state) => ({
+    undecidedPairs: [...state.undecidedPairs, pair]
+  })),
+
   reset: () => set({
-    values: standardValues,
+    values: [...standardValues].sort((a, b) => a.name.localeCompare(b.name)),
     currentIndex: 0,
     isComplete: false,
+    undecidedPairs: [],
   }),
 }));
