@@ -1,0 +1,56 @@
+Create a web application for a Values Card Sort exercise targeting meditation practitioners and changemakers. This app should help users identify their top 10 personal values through a series of comparative choices.
+
+App Requirements:
+1. Start with a brief introduction explaining the purpose of the exercise
+
+2. Present users with pairs of values in a "hot or not" style comparison:
+   - Show two values side by side with their descriptions
+   - Use the prompt: "If you could only have one of these values in your life..."
+   - After approximately 20-25 comparisons, use 3-5 AI-generated deeper questions to refine the selection
+   - Based on these responses, automatically determine their top 10 values
+
+3. Let users review and customize their top 10 values:
+   - Edit any value name
+   - Edit any value description
+   - Replace a value with a custom one if desired
+
+4. Allow users to rate how well they've lived according to each value in the past 3 months (scale 1-10)
+
+Values Data:
+Use the following 83 standard values from Miller's Values Card Sort plus these 10 additional values that are particularly relevant to meditators and changemakers:
+
+- PRESENCE: to be fully engaged in the current moment
+- EMOTIONAL INTELLIGENCE: to understand and work skillfully with my emotions
+- CATALYST: to initiate positive change in systems and communities
+- INTEGRITY: to align my actions with my deepest values
+- TRANSMISSION: to share my spiritual experience to benefit others
+- VULNERABILITY: to be open about my true feelings and experiences
+- IMPACT: to create lasting positive change in the world
+- EQUANIMITY: to maintain balance amid life's ups and downs
+- COMMUNITY: to be part of a supportive growth-oriented group
+- AUTHENTICITY: to live in alignment with my true nature
+
+Technical Specifications:
+- Create a single-page React application
+- Structure the CSS with clear class names and organization for easy future styling changes
+- Use CSS variables for colors, fonts, spacing, etc. to enable easy theming later
+- Set up the app with modular components that can be easily modified
+- Make it mobile-responsive
+- No backend required; all processing happens client-side
+- Allow users to save or export their final values list
+
+Future Styling Considerations (implement skeleton/hooks for these):
+- Include placeholder spots for potential background images behind value cards
+- Add animation hooks for selection interactions (color changes, scaling effects)
+- Set up basic sound effect capability that can be triggered on value selection
+- Create a theme provider/context to easily switch between different visual styles
+- Include a simple settings panel structure for future styling options
+
+Implementation Notes:
+- For the comparison algorithm, use a scoring system (+1 for chosen values, -1 for rejected)
+- The comparison process should feel meaningful and engaging, not tedious
+- Keep all standard values including potentially "non-spiritual" ones like FAME, ATTRACTIVENESS, and POPULARITY to allow for authentic self-discovery
+- Ensure the editing interface is intuitive and straightforward
+- Structure the code to make future UI/UX enhancements straightforward
+
+The goal is to help users discover their core values in a way that feels authentic and personally meaningful, supporting their meditation practice and aspirations as changemakers, while also creating an engaging and dopamine-supportive user experience.
