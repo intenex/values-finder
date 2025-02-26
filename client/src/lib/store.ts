@@ -1,29 +1,73 @@
 import { create } from 'zustand';
 import { Value, standardValues } from './values';
 
-interface UndecidedPair {
-  value1: Value;
-  value2: Value;
+class ValueSortingAlgorithm {
+  private values: Value[];
+  private comparedPairs: { [key: string]: boolean } = {}; // Keep track of compared pairs
+
+  constructor(values: Value[]) {
+    this.values = values;
+  }
+
+  recordSelection(selectedId: number, rejectedId: number): void {
+    const key1 = Math.min(selectedId, rejectedId);
+    const key2 = Math.max(selectedId, rejectedId);
+    this.comparedPairs[`${key1}-${key2}`] = true;
+  }
+
+  skipComparison(value1: Value, value2: Value): void {
+    const key1 = Math.min(value1.id, value2.id);
+    const key2 = Math.max(value1.id, value2.id);
+    this.comparedPairs[`${key1}-${key2}`] = true;
+  }
+
+  getNextPair(values: Value[]): [Value, Value] | null {
+    for (let i = 0; i < values.length; i++) {
+      for (let j = i + 1; j < values.length; j++) {
+        const key1 = Math.min(values[i].id, values[j].id);
+        const key2 = Math.max(values[i].id, values[j].id);
+        if (!this.comparedPairs[`${key1}-${key2}`]) {
+          return [values[i], values[j]];
+        }
+      }
+    }
+    return null;
+  }
+
+  shouldFinalize(values: Value[]): boolean {
+    for (let i = 0; i < values.length; i++) {
+      for (let j = i + 1; j < values.length; j++) {
+        const key1 = Math.min(values[i].id, values[j].id);
+        const key2 = Math.max(values[i].id, values[j].id);
+        if (!this.comparedPairs[`${key1}-${key2}`]) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }
+
 
 interface ValuesStore {
   values: Value[];
-  currentIndex: number;
+  sorter: ValueSortingAlgorithm;
+  currentPair: [Value, Value] | null;
   isComplete: boolean;
-  undecidedPairs: UndecidedPair[];
   addValue: (value: Value) => void;
   updateValue: (value: Value) => void;
-  incrementScore: (id: number) => void;
   setRating: (id: number, rating: number) => void;
-  addUndecidedPair: (pair: UndecidedPair) => void;
+  recordSelection: (selectedId: number, rejectedId: number) => void;
+  skipComparison: (value1: Value, value2: Value) => void;
+  getNextPair: () => void;
   reset: () => void;
 }
 
-export const useValuesStore = create<ValuesStore>((set) => ({
+export const useValuesStore = create<ValuesStore>((set, get) => ({
   values: [...standardValues].sort((a, b) => a.name.localeCompare(b.name)),
-  currentIndex: 0,
+  sorter: new ValueSortingAlgorithm(standardValues),
+  currentPair: null,
   isComplete: false,
-  undecidedPairs: [],
 
   addValue: (value) => set((state) => ({
     values: [...state.values, value],
@@ -33,26 +77,40 @@ export const useValuesStore = create<ValuesStore>((set) => ({
     values: state.values.map((v) => v.id === value.id ? value : v),
   })),
 
-  incrementScore: (id) => set((state) => ({
-    values: state.values.map((v) => 
-      v.id === id ? { ...v, score: v.score + 1 } : v
-    ),
-  })),
-
   setRating: (id, rating) => set((state) => ({
     values: state.values.map((v) =>
       v.id === id ? { ...v, rating } : v
     ),
   })),
 
-  addUndecidedPair: (pair) => set((state) => ({
-    undecidedPairs: [...state.undecidedPairs, pair]
-  })),
+  recordSelection: (selectedId, rejectedId) => {
+    const { sorter, values } = get();
+    sorter.recordSelection(selectedId, rejectedId);
+    set({ currentPair: sorter.getNextPair(values) });
 
-  reset: () => set({
-    values: [...standardValues].sort((a, b) => a.name.localeCompare(b.name)),
-    currentIndex: 0,
-    isComplete: false,
-    undecidedPairs: [],
-  }),
+    if (sorter.shouldFinalize(values)) {
+      set({ isComplete: true });
+    }
+  },
+
+  skipComparison: (value1, value2) => {
+    const { sorter, values } = get();
+    sorter.skipComparison(value1, value2);
+    set({ currentPair: sorter.getNextPair(values) });
+  },
+
+  getNextPair: () => {
+    const { sorter, values } = get();
+    set({ currentPair: sorter.getNextPair(values) });
+  },
+
+  reset: () => {
+    const values = [...standardValues].sort((a, b) => a.name.localeCompare(b.name));
+    set({
+      values,
+      sorter: new ValueSortingAlgorithm(values),
+      currentPair: null,
+      isComplete: false,
+    });
+  },
 }));

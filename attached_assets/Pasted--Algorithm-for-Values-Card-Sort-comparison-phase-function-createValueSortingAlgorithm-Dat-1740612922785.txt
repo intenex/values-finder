@@ -1,0 +1,166 @@
+// Algorithm for Values Card Sort comparison phase
+function createValueSortingAlgorithm() {
+  // Data structures to track the selection process
+  const valueScores = {};        // Track scores for each value
+  const comparisonHistory = {};  // Track which pairs have been compared
+  const presentationCounts = {}; // Track how many times each value has been shown
+  let roundCount = 0;            // Track how many comparison rounds we've done
+  
+  // Initialize scores for all values to 0
+  function initializeValues(allValues) {
+    allValues.forEach(value => {
+      valueScores[value.id] = 0;
+      presentationCounts[value.id] = 0;
+    });
+    return [...allValues]; // Return a copy of the values array
+  }
+  
+  // Get the key for a comparison between two values
+  function getComparisonKey(id1, id2) {
+    return id1 < id2 ? `${id1}-${id2}` : `${id2}-${id1}`;
+  }
+  
+  // Check if this pair has been compared before
+  function haveBeenCompared(id1, id2) {
+    return comparisonHistory[getComparisonKey(id1, id2)] === true;
+  }
+  
+  // Mark this pair as compared
+  function markAsCompared(id1, id2) {
+    comparisonHistory[getComparisonKey(id1, id2)] = true;
+  }
+  
+  // Get the next pair to compare
+  function getNextPair(activeValues) {
+    if (activeValues.length < 2) return null;
+    
+    // Strategy: find the least presented values that haven't been compared
+    // Sort values by presentation count (ascending)
+    const sortedByPresentation = [...activeValues].sort((a, b) => {
+      return presentationCounts[a.id] - presentationCounts[b.id];
+    });
+    
+    // Try to find a pair that hasn't been compared yet
+    for (let i = 0; i < sortedByPresentation.length; i++) {
+      const value1 = sortedByPresentation[i];
+      
+      for (let j = 0; j < sortedByPresentation.length; j++) {
+        if (i === j) continue; // Skip self
+        
+        const value2 = sortedByPresentation[j];
+        
+        // If we've already compared this pair, skip
+        if (haveBeenCompared(value1.id, value2.id)) continue;
+        
+        // Found a pair that hasn't been compared
+        markAsCompared(value1.id, value2.id);
+        presentationCounts[value1.id]++;
+        presentationCounts[value2.id]++;
+        roundCount++;
+        
+        return [value1, value2];
+      }
+    }
+    
+    // If we've compared all possible pairs, start phase 2: comparing top contenders
+    const topContenders = getTopContenders(activeValues, 20);
+    
+    // Reset comparison history for phase 2
+    if (topContenders.length >= 2) {
+      comparisonHistory = {};
+      return getNextPair(topContenders);
+    }
+    
+    return null; // No more comparisons needed
+  }
+  
+  // Record a selection between two values
+  function recordSelection(selectedId, rejectedId) {
+    valueScores[selectedId] = valueScores[selectedId] + 1;
+    valueScores[rejectedId] = valueScores[rejectedId] - 1;
+  }
+  
+  // Get the top N values based on current scores
+  function getTopContenders(values, count) {
+    return [...values]
+      .sort((a, b) => valueScores[b.id] - valueScores[a.id])
+      .slice(0, count);
+  }
+  
+  // Determine if we have enough information to finalize top values
+  function shouldFinalize(activeValues) {
+    // Finalize if we've done at least 25 comparisons and either:
+    // 1. We've compared all possible pairs, or
+    // 2. We've done at least 35 rounds
+    if (roundCount < 25) return false;
+    
+    const possiblePairs = (activeValues.length * (activeValues.length - 1)) / 2;
+    return (Object.keys(comparisonHistory).length >= possiblePairs) || (roundCount >= 35);
+  }
+  
+  // Get the final top 10 values
+  function getFinalTopValues(allValues) {
+    return getTopContenders(allValues, 10);
+  }
+  
+  // Handle the case where user can't decide between values
+  function skipComparison(value1, value2) {
+    // Mark as compared so we don't show immediately again
+    markAsCompared(value1.id, value2.id);
+    
+    // But schedule to ask again later with reduced priority
+    setTimeout(() => {
+      delete comparisonHistory[getComparisonKey(value1.id, value2.id)];
+    }, 5000);  // Wait at least 5 seconds or 5 other comparisons
+  }
+  
+  // Public API
+  return {
+    initializeValues,
+    getNextPair,
+    recordSelection,
+    skipComparison,
+    shouldFinalize,
+    getFinalTopValues,
+    getComparisonStats: () => ({
+      roundCount,
+      comparedPairs: Object.keys(comparisonHistory).length,
+      valueScores: {...valueScores},
+      presentationCounts: {...presentationCounts}
+    })
+  };
+}
+
+// Example usage:
+/*
+const valuesSorter = createValueSortingAlgorithm();
+const activeValues = valuesSorter.initializeValues(allValues);
+
+// In your component:
+const [currentPair, setCurrentPair] = useState(null);
+
+// Get next pair to display
+function updateCurrentPair() {
+  const nextPair = valuesSorter.getNextPair(activeValues);
+  setCurrentPair(nextPair);
+  
+  if (!nextPair && valuesSorter.shouldFinalize(activeValues)) {
+    const topValues = valuesSorter.getFinalTopValues(activeValues);
+    moveToNextPhase(topValues);
+  }
+}
+
+// When user selects a value
+function handleSelection(selectedId, rejectedId) {
+  valuesSorter.recordSelection(selectedId, rejectedId);
+  updateCurrentPair();
+}
+
+// When user can't decide
+function handleSkip() {
+  if (currentPair) {
+    valuesSorter.skipComparison(currentPair[0], currentPair[1]);
+    updateCurrentPair();
+  }
+}
+*/
