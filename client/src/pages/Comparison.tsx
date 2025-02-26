@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { ComparisonCard } from "@/components/ComparisonCard";
 import { useValuesStore } from "@/lib/store";
-import { Value } from "@/lib/values";
+import { Value, compareValues } from "@/lib/values";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
@@ -17,7 +17,7 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export default function Comparison() {
   const [, navigate] = useLocation();
-  const { values, incrementScore, addUndecidedPair } = useValuesStore();
+  const { values, updateValue, addUndecidedPair } = useValuesStore();
   const [comparisons, setComparisons] = useState<[Value, Value][]>([]);
   const [currentPair, setCurrentPair] = useState(0);
 
@@ -37,7 +37,15 @@ export default function Comparison() {
   }, [values]);
 
   const handleSelection = (selected: Value) => {
-    incrementScore(selected.id);
+    const [value1, value2] = comparisons[currentPair];
+    const [updatedWinner, updatedLoser] = compareValues(
+      selected.id === value1.id ? value1 : value2,
+      selected.id === value1.id ? value2 : value1
+    );
+
+    // Update both values with their new scores
+    updateValue(updatedWinner);
+    updateValue(updatedLoser);
 
     if (currentPair < comparisons.length - 1) {
       setCurrentPair(prev => prev + 1);
