@@ -58,10 +58,10 @@ export default function Customize() {
         </div>
 
         <div className="flex justify-center gap-4">
-          <Button variant="outline" onClick={() => navigate("/compare")}>
+          <Button variant="outline" onClick={() => navigate("/comparison")}>
             Back to Comparison
           </Button>
-          <Button onClick={() => navigate("/rate")}>
+          <Button onClick={() => navigate("/rating")}>
             Continue to Rating
           </Button>
         </div>
