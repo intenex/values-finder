@@ -31,7 +31,27 @@ export default function Comparison() {
 
   const [value1, value2] = currentPair;
   const stats = sorter.getStats();
-  const progress = (stats.roundCount / 25) * 100;
+  // Calculate progress based on actual completion criteria
+  const minRounds = 25;
+  const maxRounds = 45;
+  const currentRounds = stats.roundCount;
+  
+  let progress = 0;
+  if (currentRounds >= maxRounds) {
+    progress = 100;
+  } else if (currentRounds >= minRounds) {
+    // Check if we have clear separation between top values
+    const shouldFinalize = sorter.shouldFinalize(values);
+    if (shouldFinalize) {
+      progress = 100;
+    } else {
+      // Linear progression from minRounds to maxRounds
+      progress = 70 + ((currentRounds - minRounds) / (maxRounds - minRounds)) * 30;
+    }
+  } else {
+    // Linear progression from 0 to 70% for first 25 rounds
+    progress = (currentRounds / minRounds) * 70;
+  }
 
   return (
     <div className="min-h-screen bg-background p-6">

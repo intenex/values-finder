@@ -40,7 +40,7 @@ export default function Home() {
             <div className="flex justify-center">
               <Button
                 size="lg"
-                onClick={() => navigate("/compare")}
+                onClick={() => navigate("/comparison")}
                 className="mt-4"
               >
                 Begin Exercise

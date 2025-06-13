@@ -12,9 +12,9 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/compare" component={Comparison} />
+      <Route path="/comparison" component={Comparison} />
       <Route path="/customize" component={Customize} />
-      <Route path="/rate" component={Rating} />
+      <Route path="/rating" component={Rating} />
       <Route component={NotFound} />
     </Switch>
   );
