@@ -1,38 +1,43 @@
-import { users, type User, type InsertUser } from "@shared/schema";
+import { values, type Value, type InsertValue } from "@shared/schema";
 
 // modify the interface with any CRUD methods
 // you might need
 
 export interface IStorage {
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getValue(id: number): Promise<Value | undefined>;
+  getValues(): Promise<Value[]>;
+  createValue(value: InsertValue): Promise<Value>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<number, User>;
+  private valuesMap: Map<number, Value>;
   currentId: number;
 
   constructor() {
-    this.users = new Map();
+    this.valuesMap = new Map();
     this.currentId = 1;
   }
 
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+  async getValue(id: number): Promise<Value | undefined> {
+    return this.valuesMap.get(id);
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getValues(): Promise<Value[]> {
+    return Array.from(this.valuesMap.values());
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createValue(insertValue: InsertValue): Promise<Value> {
     const id = this.currentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const value: Value = { 
+      id,
+      name: insertValue.name!,
+      description: insertValue.description!,
+      score: insertValue.score ?? 0,
+      isCustom: insertValue.isCustom ?? false,
+      rating: insertValue.rating ?? null
+    };
+    this.valuesMap.set(id, value);
+    return value;
   }
 }
 

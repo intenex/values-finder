@@ -1,4 +1,3 @@
-```typescript
 interface Value {
   id: number;
   name: string;
@@ -128,4 +127,3 @@ export class ValueSortingAlgorithm {
     };
   }
 }
-```

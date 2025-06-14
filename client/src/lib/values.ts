@@ -9,7 +9,7 @@ export interface Value {
 
 // Constants for the rating system
 const K_FACTOR = 32; // How much a single comparison affects scores
-const DEFAULT_SCORE = 1500; // Starting score for all values
+const DEFAULT_SCORE = 0; // Starting score for all values
 
 // Initialize all values with a default score
 export const standardValues: Value[] = [

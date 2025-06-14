@@ -101,6 +101,33 @@ export default function Customize() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Show all values with scores */}
+        <div className="mt-12 pt-8 border-t">
+          <h2 className="text-2xl font-bold mb-4">All Values Ranking</h2>
+          <p className="text-muted-foreground mb-6">
+            Here are all values sorted by their scores based on your comparisons. 
+            Positive scores indicate values you selected more often, negative scores indicate values you rejected more often.
+          </p>
+          <div className="space-y-2 max-h-96 overflow-y-auto border rounded-lg p-4">
+            {values
+              .sort((a, b) => b.score - a.score)
+              .map((value, index) => (
+                <div key={value.id} className="flex items-center justify-between py-2 px-3 hover:bg-muted/50 rounded">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-muted-foreground w-8">{index + 1}.</span>
+                    <div>
+                      <span className="font-medium">{value.name}</span>
+                      <span className="text-sm text-muted-foreground ml-2">- {value.description}</span>
+                    </div>
+                  </div>
+                  <span className={`font-mono text-sm ${value.score > 0 ? 'text-green-600' : value.score < 0 ? 'text-red-600' : 'text-muted-foreground'}`}>
+                    {value.score > 0 ? '+' : ''}{value.score}
+                  </span>
+                </div>
+              ))}
+          </div>
+        </div>
       </div>
     </div>
   );

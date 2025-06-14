@@ -184,6 +184,7 @@ interface ValuesStore {
   skipComparison: (value1: Value, value2: Value) => void;
   getNextPair: () => void;
   reset: () => void;
+  updateScoresFromSorter: () => void;
 }
 
 export const useValuesStore = create<ValuesStore>((set, get) => ({
@@ -207,11 +208,12 @@ export const useValuesStore = create<ValuesStore>((set, get) => ({
   })),
 
   recordSelection: (selectedId, rejectedId) => {
-    const { sorter, values } = get();
+    const { sorter, values, updateScoresFromSorter } = get();
     sorter.recordSelection(selectedId, rejectedId);
     set({ currentPair: sorter.getNextPair(values) });
 
     if (sorter.shouldFinalize(values)) {
+      updateScoresFromSorter();
       set({ isComplete: true });
     }
   },
@@ -235,5 +237,18 @@ export const useValuesStore = create<ValuesStore>((set, get) => ({
       currentPair: null,
       isComplete: false,
     });
+  },
+
+  updateScoresFromSorter: () => {
+    const { values, sorter } = get();
+    const stats = sorter.getStats();
+    
+    // Update all values with their scores from the sorter
+    const updatedValues = values.map(v => ({
+      ...v,
+      score: stats.valueScores[v.id] || 0
+    }));
+    
+    set({ values: updatedValues });
   },
 }));
