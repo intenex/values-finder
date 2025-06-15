@@ -23,11 +23,6 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
-  const serverOptions = {
-    middlewareMode: true,
-    hmr: { server },
-  };
-
   const vite = await createViteServer({
     ...viteConfig,
     configFile: false,
@@ -38,7 +33,17 @@ export async function setupVite(app: Express, server: Server) {
         process.exit(1);
       },
     },
-    server: serverOptions,
+    server: {
+      ...viteConfig.server,
+      middlewareMode: true,
+      hmr: { 
+        ...viteConfig.server?.hmr,
+        server,
+      },
+      // Allow all hosts for Cloudflare Tunnel
+      host: true,
+      cors: true,
+    },
     appType: "custom",
   });
 

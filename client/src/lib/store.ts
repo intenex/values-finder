@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { Value, standardValues } from './values';
+import { MaxDiffAlgorithm, MaxDiffSet, MaxDiffStats } from './maxDiffAlgorithm';
 
 interface ComparisonStats {
   roundCount: number;
@@ -175,23 +176,33 @@ class ValueSortingAlgorithm {
 interface ValuesStore {
   values: Value[];
   sorter: ValueSortingAlgorithm;
+  maxDiffSorter: MaxDiffAlgorithm;
   currentPair: [Value, Value] | null;
+  currentMaxDiffSet: MaxDiffSet | null;
   isComplete: boolean;
+  useMaxDiff: boolean;
   addValue: (value: Value) => void;
   updateValue: (value: Value) => void;
   setRating: (id: number, rating: number) => void;
   recordSelection: (selectedId: number, rejectedId: number) => void;
+  recordMaxDiffChoice: (mostImportantId: number, leastImportantId: number) => void;
   skipComparison: (value1: Value, value2: Value) => void;
   getNextPair: () => void;
+  getNextMaxDiffSet: () => void;
   reset: () => void;
   updateScoresFromSorter: () => void;
+  updateScoresFromMaxDiff: () => void;
+  toggleAlgorithm: () => void;
 }
 
 export const useValuesStore = create<ValuesStore>((set, get) => ({
   values: [...standardValues].sort((a, b) => a.name.localeCompare(b.name)),
   sorter: new ValueSortingAlgorithm(standardValues),
+  maxDiffSorter: new MaxDiffAlgorithm(standardValues),
   currentPair: null,
+  currentMaxDiffSet: null,
   isComplete: false,
+  useMaxDiff: true, // Default to new algorithm
 
   addValue: (value) => set((state) => ({
     values: [...state.values, value],
@@ -234,7 +245,9 @@ export const useValuesStore = create<ValuesStore>((set, get) => ({
     set({
       values,
       sorter: new ValueSortingAlgorithm(values),
+      maxDiffSorter: new MaxDiffAlgorithm(values),
       currentPair: null,
+      currentMaxDiffSet: null,
       isComplete: false,
     });
   },
@@ -250,5 +263,45 @@ export const useValuesStore = create<ValuesStore>((set, get) => ({
     }));
     
     set({ values: updatedValues });
+  },
+
+  recordMaxDiffChoice: (mostImportantId, leastImportantId) => {
+    const { maxDiffSorter, currentMaxDiffSet } = get();
+    if (!currentMaxDiffSet) return;
+    
+    maxDiffSorter.recordChoice(currentMaxDiffSet.id, mostImportantId, leastImportantId);
+    
+    if (maxDiffSorter.isComplete()) {
+      get().updateScoresFromMaxDiff();
+      set({ isComplete: true, currentMaxDiffSet: null });
+    } else {
+      set({ currentMaxDiffSet: maxDiffSorter.getCurrentSet() });
+    }
+  },
+
+  getNextMaxDiffSet: () => {
+    const { maxDiffSorter } = get();
+    set({ currentMaxDiffSet: maxDiffSorter.getCurrentSet() });
+  },
+
+  updateScoresFromMaxDiff: () => {
+    const { values, maxDiffSorter } = get();
+    const finalRanking = maxDiffSorter.getFinalRanking();
+    
+    // Update all values with their scores from MaxDiff
+    const updatedValues = values.map(v => {
+      const rankedValue = finalRanking.find(rv => rv.id === v.id);
+      return {
+        ...v,
+        score: rankedValue?.score || 0
+      };
+    });
+    
+    set({ values: updatedValues });
+  },
+
+  toggleAlgorithm: () => {
+    set((state) => ({ useMaxDiff: !state.useMaxDiff }));
+    get().reset();
   },
 }));

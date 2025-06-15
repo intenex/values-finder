@@ -17,7 +17,7 @@ export default defineConfig({
     process.env.REPL_ID !== undefined
       ? [
           await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
+            m.cartographer()
           ),
         ]
       : []),
@@ -32,5 +32,16 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
+  },
+  server: {
+    host: true, // Listen on all addresses
+    hmr: {
+      clientPort: 443,
+      protocol: "wss", // Use secure websocket for HMR through Cloudflare
+      host: "test.stimm.ing",
+    },
+    // Allow all hosts for Cloudflare Tunnel
+    allowedHosts: [".localhost", ".stimm.ing", "test.stimm.ing"],
+    cors: true,
   },
 });

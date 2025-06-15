@@ -27,13 +27,15 @@ export default function Home() {
             <div className="space-y-4">
               <h2 className="text-xl font-semibold">How it works:</h2>
               <ol className="list-decimal list-inside space-y-2">
-                <li>Choose between two values: which resonates with you more strongly?</li>
-                <li>After several comparisons, we'll ask you a few clarifying questions</li>
-                <li>You'll be presented with your top 10 values and have the option to customize the value or definition</li>
+                <li>You'll see sets of 5 values at a time</li>
+                <li>Choose which value is MOST important and which is LEAST important</li>
+                <li>Complete about 40 quick selections (takes just 3-4 minutes)</li>
+                <li>Review your top 10 values and customize their names/descriptions</li>
+                <li>Rate how well you've been living according to each value</li>
               </ol>
               <p className="text-muted-foreground italic mt-4">
-                Remember, values are mostly how you currently live your life but sometimes 
-                a value can be somewhat aspirational.
+                This MaxDiff approach ensures every value is evaluated, giving you 
+                consistent and reliable results every time.
               </p>
             </div>
 
