@@ -223,9 +223,9 @@ export class MaxDiffAlgorithm {
   }
 
   getStats(): MaxDiffStats {
-    const totalSets = this.currentPhase === 'screening' 
-      ? this.screeningSets.length 
-      : this.screeningSets.length + this.refinementSets.length;
+    // Always return total sets as both phases combined for consistency
+    const totalSets = this.screeningSets.length + 
+      (this.currentPhase === 'screening' ? 15 : this.refinementSets.length); // Estimate 15 for refinement if not generated yet
       
     const completedSets = this.currentPhase === 'screening'
       ? this.currentSetIndex

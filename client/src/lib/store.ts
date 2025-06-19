@@ -304,4 +304,46 @@ export const useValuesStore = create<ValuesStore>((set, get) => ({
     set((state) => ({ useMaxDiff: !state.useMaxDiff }));
     get().reset();
   },
+  
+  loadProgress: (progress: any) => {
+    if (!progress || !progress.progress) {
+      get().reset();
+      return;
+    }
+    
+    // Restore values with scores
+    const restoredValues = progress.allValues?.map((v: any) => {
+      const originalValue = standardValues.find(sv => sv.id === v.id);
+      return originalValue ? { ...originalValue, score: v.score } : null;
+    }).filter(Boolean) || [...standardValues];
+    
+    // Create new algorithm instance
+    const newMaxDiffSorter = new MaxDiffAlgorithm(restoredValues);
+    
+    // Skip to the correct position by simulating completed sets
+    const completedSets = progress.progress.completedSets || 0;
+    for (let i = 0; i < completedSets; i++) {
+      const currentSet = newMaxDiffSorter.getCurrentSet();
+      if (currentSet && currentSet.values.length >= 2) {
+        // Simulate a choice to advance the algorithm
+        newMaxDiffSorter.recordChoice(
+          currentSet.id,
+          currentSet.values[0].id,
+          currentSet.values[currentSet.values.length - 1].id
+        );
+      }
+    }
+    
+    set({
+      values: restoredValues,
+      maxDiffSorter: newMaxDiffSorter,
+      sorter: new ValueSortingAlgorithm(restoredValues),
+      useMaxDiff: true,
+      isComplete: false,
+      currentMaxDiffSet: null,
+    });
+    
+    // Get the next set to continue
+    get().getNextMaxDiffSet();
+  },
 }));

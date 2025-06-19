@@ -21,6 +21,12 @@ export function MaxDiffCard({
 }: MaxDiffCardProps) {
   const [mostImportant, setMostImportant] = useState<number | null>(null);
   const [leastImportant, setLeastImportant] = useState<number | null>(null);
+  
+  // Calculate phase-specific round numbers
+  const screeningSets = 56; // Approximate number of screening sets
+  const isPhase2 = phase === 'refinement';
+  const displaySetNumber = isPhase2 ? (setNumber - screeningSets) : setNumber;
+  const phaseTotal = isPhase2 ? 15 : screeningSets;
 
   const handleValueClick = (valueId: number, type: 'most' | 'least') => {
     if (type === 'most') {
@@ -58,12 +64,19 @@ export function MaxDiffCard({
     : 'You\'re almost done! Choose the MOST and LEAST important from these top candidates.';
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${phase === 'refinement' ? 'animate-in fade-in duration-500' : ''}`}>
       <div className="text-center">
+        <div className={`inline-block px-4 py-1 rounded-full text-sm font-medium mb-3 ${
+          phase === 'screening' 
+            ? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' 
+            : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+        }`}>
+          {phase === 'screening' ? 'Phase 1' : 'Phase 2'}
+        </div>
         <h2 className="text-2xl font-bold mb-2">{phaseTitle}</h2>
         <p className="text-muted-foreground mb-2">{phaseDescription}</p>
         <p className="text-sm text-muted-foreground">
-          Set {setNumber} of {totalSets}
+          Round {displaySetNumber} of {phaseTotal}
         </p>
       </div>
 

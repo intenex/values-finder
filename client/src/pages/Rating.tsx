@@ -1,15 +1,22 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { useValuesStore } from "@/lib/store";
+import { useAuthStore } from "@/lib/auth";
 import { getTopValues } from "@/lib/values";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
+import { AuthModal } from "@/components/AuthModal";
 import html2canvas from 'html2canvas';
 
 export default function Rating() {
-  const { values, setRating } = useValuesStore();
+  const [, navigate] = useLocation();
+  const { values, setRating, reset } = useValuesStore();
+  const { isAuthenticated, saveValuesSession } = useAuthStore();
   const topValues = getTopValues(values);
   const [exporting, setExporting] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const handleExport = async () => {
     setExporting(true);
@@ -22,6 +29,39 @@ export default function Rating() {
       link.click();
     }
     setExporting(false);
+  };
+
+  const handleSave = async () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      // Ensure all required fields are present
+      const formattedTopValues = topValues.map(v => ({
+        id: v.id,
+        name: v.name,
+        description: v.description,
+        rating: v.rating || 5, // Default to 5 if no rating
+        score: v.score,
+        isCustom: v.isCustom || false
+      }));
+      
+      await saveValuesSession(
+        formattedTopValues,
+        values.map(v => ({ id: v.id, score: v.score }))
+      );
+      // Reset state after successful save
+      reset();
+      // Show success message or navigate to profile
+      navigate('/profile');
+    } catch (error) {
+      console.error('Failed to save session:', error);
+      // You could show an error toast here
+    }
+    setSaving(false);
   };
 
   return (
@@ -54,14 +94,29 @@ export default function Rating() {
         </div>
 
         <div className="flex justify-center gap-4">
-          <Button variant="outline" onClick={() => window.location.href = "/"}>
+          <Button variant="outline" onClick={() => navigate("/customize")}>
+            Back to Edit
+          </Button>
+          <Button variant="outline" onClick={() => {
+            reset();
+            navigate("/");
+          }}>
             Start Over
           </Button>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "Saving..." : "Save Session"}
+          </Button>
           <Button onClick={handleExport} disabled={exporting}>
-            {exporting ? "Exporting..." : "Export Values"}
+            {exporting ? "Exporting..." : "Export as Image"}
           </Button>
         </div>
       </div>
+      
+      <AuthModal 
+        open={showAuthModal} 
+        onOpenChange={setShowAuthModal}
+        onSuccess={handleSave}
+      />
     </div>
   );
 }

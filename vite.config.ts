@@ -35,13 +35,12 @@ export default defineConfig({
   },
   server: {
     host: true, // Listen on all addresses
-    hmr: {
-      clientPort: 443,
-      protocol: "wss", // Use secure websocket for HMR through Cloudflare
-      host: "test.stimm.ing",
+    hmr: process.env.NODE_ENV === 'production' ? false : {
+      // HMR configuration for development
+      port: 4167,
     },
-    // Allow all hosts for Cloudflare Tunnel
-    allowedHosts: [".localhost", ".stimm.ing", "test.stimm.ing"],
+    // Allow all hosts
     cors: true,
+    allowedHosts: 'all', // Allow all hosts including test.stimm.ing
   },
 });

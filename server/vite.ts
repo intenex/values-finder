@@ -37,7 +37,7 @@ export async function setupVite(app: Express, server: Server) {
       ...viteConfig.server,
       middlewareMode: true,
       hmr: { 
-        ...viteConfig.server?.hmr,
+        ...(typeof viteConfig.server?.hmr === 'object' ? viteConfig.server.hmr : {}),
         server,
       },
       // Allow all hosts for Cloudflare Tunnel
