@@ -169,10 +169,7 @@ export function UserProfile() {
                     <Button 
                       variant="outline" 
                       size="lg"
-                      onClick={() => {
-                        reset();
-                        navigate('/');
-                      }}
+                      onClick={() => navigate('/start-test')}
                       className="flex-1 sm:flex-none"
                     >
                       <ClipboardList className="mr-2 h-4 w-4" />

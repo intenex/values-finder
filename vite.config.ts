@@ -35,12 +35,14 @@ export default defineConfig({
   },
   server: {
     host: true, // Listen on all addresses
-    hmr: process.env.NODE_ENV === 'production' ? false : {
-      // HMR configuration for development
-      port: 4167,
-    },
+    hmr:
+      process.env.NODE_ENV === "production"
+        ? false
+        : {
+            // HMR configuration for development
+            port: 4167,
+          },
     // Allow all hosts
     cors: true,
-    allowedHosts: 'all', // Allow all hosts including test.stimm.ing
   },
 });
