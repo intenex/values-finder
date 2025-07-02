@@ -8,17 +8,41 @@ import { AlertCircle } from "lucide-react";
 
 export default function Home() {
   const [, navigate] = useLocation();
-  const { isAuthenticated, getLatestIncomplete } = useAuthStore();
+  const { isAuthenticated, getLatestIncomplete, getValuesSessions } = useAuthStore();
   const { reset } = useValuesStore();
   const [hasIncompleteSession, setHasIncompleteSession] = useState(false);
+  const [checkingUser, setCheckingUser] = useState(true);
   
   useEffect(() => {
-    if (isAuthenticated) {
-      getLatestIncomplete().then(session => {
-        setHasIncompleteSession(!!session && !session.completedAt);
-      });
-    }
-  }, [isAuthenticated]);
+    const checkUserStatus = async () => {
+      if (isAuthenticated) {
+        // Check if user has any completed sessions
+        const sessions = await getValuesSessions();
+        const hasCompletedSessions = sessions.some(s => s.completedAt);
+        
+        if (hasCompletedSessions) {
+          // Redirect returning users to their profile
+          navigate('/profile');
+          return;
+        }
+        
+        // Check for incomplete sessions
+        const incompleteSession = await getLatestIncomplete();
+        setHasIncompleteSession(!!incompleteSession && !incompleteSession.completedAt);
+      }
+      setCheckingUser(false);
+    };
+    
+    checkUserStatus();
+  }, [isAuthenticated, navigate]);
+  
+  if (checkingUser) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-6 pt-6">
@@ -78,10 +102,10 @@ export default function Home() {
               <ol className="list-decimal list-inside space-y-2">
                 <li>You'll see sets of 5 values at a time</li>
                 <li>Choose which value is MOST important and which is LEAST important</li>
-                <li>Complete 76 total rounds in two phases:
+                <li>Complete 71 total rounds in two phases:
                   <ul className="list-disc list-inside ml-4 mt-1 text-sm text-muted-foreground">
                     <li>Phase 1: 56 rounds to identify your top values</li>
-                    <li>Phase 2: 20 rounds to rank your most important values</li>
+                    <li>Phase 2: 15 rounds to rank your most important values</li>
                   </ul>
                 </li>
                 <li>Review your top 10 values and customize their names/descriptions</li>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { useAuthStore } from '@/lib/auth';
-import { useValuesStore } from '@/lib/store';
 import { UserProfile } from '@/components/UserProfile';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
@@ -9,7 +8,6 @@ import { AuthModal } from '@/components/AuthModal';
 export default function Profile() {
   const [, navigate] = useLocation();
   const { isAuthenticated, checkAuth } = useAuthStore();
-  const { reset } = useValuesStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
   
   useEffect(() => {
@@ -55,15 +53,6 @@ export default function Profile() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto">
         <UserProfile />
-        
-        <div className="mt-8 flex justify-center">
-          <Button onClick={() => {
-            reset();
-            navigate('/');
-          }}>
-            Start New Values Exercise
-          </Button>
-        </div>
       </div>
     </div>
   );
