@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { useAuthStore } from '@/lib/auth';
+import { useValuesStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
-import { LogOut, TrendingUp, Calendar, PlayCircle } from 'lucide-react';
+import { LogOut, TrendingUp, Calendar, PlayCircle, RefreshCw, ClipboardList } from 'lucide-react';
 
 interface ValuesSession {
   id: string;
@@ -29,6 +30,7 @@ interface ValuesSession {
 export function UserProfile() {
   const [, navigate] = useLocation();
   const { user, logout, getValuesSessions, isAuthenticated } = useAuthStore();
+  const { reset } = useValuesStore();
   const [sessions, setSessions] = useState<ValuesSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSession, setSelectedSession] = useState<ValuesSession | null>(null);
@@ -44,7 +46,11 @@ export function UserProfile() {
     try {
       const data = await getValuesSessions();
       setSessions(data);
-      if (data.length > 0 && !selectedSession) {
+      // Select the most recent completed session by default
+      const completedSessions = data.filter(s => s.completedAt);
+      if (completedSessions.length > 0 && !selectedSession) {
+        setSelectedSession(completedSessions[0]);
+      } else if (data.length > 0 && !selectedSession) {
         setSelectedSession(data[0]);
       }
     } catch (error) {
@@ -151,31 +157,58 @@ export function UserProfile() {
                 </div>
               ) : (
                 <>
+                  <div className="mb-6 flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      size="lg" 
+                      onClick={() => navigate('/reassess')}
+                      className="flex-1 sm:flex-none"
+                    >
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Reassess Values
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      onClick={() => {
+                        reset();
+                        navigate('/');
+                      }}
+                      className="flex-1 sm:flex-none"
+                    >
+                      <ClipboardList className="mr-2 h-4 w-4" />
+                      Retake Full Test
+                    </Button>
+                  </div>
+                  
                   <div className="space-y-4">
                     {selectedSession.topValues.map((value, index) => (
-                      <div key={value.id} className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
-                            <h4 className="font-semibold">{value.name}</h4>
+                      <div key={value.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-sm font-bold">
+                                {index + 1}
+                              </span>
+                              <h4 className="font-semibold text-lg">{value.name}</h4>
+                            </div>
+                            <p className="text-sm text-muted-foreground ml-11">{value.description}</p>
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">{value.description}</p>
-                        </div>
-                        <div className="text-right ml-4">
-                          <div className="flex items-center gap-1">
-                            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                            <span className="font-medium">{value.rating}/10</span>
+                          <div className="text-center min-w-[80px]">
+                            <div className="text-2xl font-bold text-primary">
+                              {value.rating}
+                              <span className="text-lg text-muted-foreground">/10</span>
+                            </div>
+                            <span className="text-xs text-muted-foreground">Rating</span>
                           </div>
-                          <span className="text-xs text-muted-foreground">Rating</span>
                         </div>
                       </div>
                     ))}
                   </div>
                   
                   {sessions.length > 1 && (
-                    <div className="mt-6 p-4 bg-muted rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        <strong>Tip:</strong> Compare your values across different sessions to see how your priorities have evolved over time.
+                    <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                      <p className="text-sm">
+                        <strong>Tip:</strong> Use the session list on the left to view your progress over time and see how your values and ratings have evolved.
                       </p>
                     </div>
                   )}
