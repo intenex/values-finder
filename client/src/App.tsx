@@ -9,6 +9,8 @@ import Comparison from "@/pages/Comparison";
 import Customize from "@/pages/Customize";
 import Rating from "@/pages/Rating";
 import Profile from "@/pages/Profile";
+import Reassess from "@/pages/Reassess";
+import StartTest from "@/pages/StartTest";
 
 function Router() {
   return (
@@ -18,6 +20,8 @@ function Router() {
       <Route path="/customize" component={Customize} />
       <Route path="/rating" component={Rating} />
       <Route path="/profile" component={Profile} />
+      <Route path="/reassess" component={Reassess} />
+      <Route path="/start-test" component={StartTest} />
       <Route component={NotFound} />
     </Switch>
   );
