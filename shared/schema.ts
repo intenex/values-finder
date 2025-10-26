@@ -1,36 +1,35 @@
-import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { pgTable, text, integer, timestamp, boolean, jsonb, index, serial } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
-import { randomUUID } from "crypto";
 
 // Users table schema
-export const users = sqliteTable("users", {
-  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
+export const users = pgTable("users", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 // Values table schema (standard values library)
-export const values = sqliteTable("values", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const values = pgTable("values", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull(),
   score: integer("score").default(0),
-  isCustom: integer("is_custom", { mode: "boolean" }).default(false),
+  isCustom: boolean("is_custom").default(false),
   rating: integer("rating"),
 });
 
 // User values sessions table - stores each completed values exercise
-export const userValuesSessions = sqliteTable("user_values_sessions", {
-  id: text("id").primaryKey().$defaultFn(() => randomUUID()),
+export const userValuesSessions = pgTable("user_values_sessions", {
+  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
-  completedAt: integer("completed_at", { mode: "timestamp" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
   // Store the top 10 values with their customizations and ratings as JSON
-  topValues: text("top_values", { mode: "json" }).$type<Array<{
+  topValues: jsonb("top_values").$type<Array<{
     id: number;
     name: string;
     description: string;
@@ -39,20 +38,27 @@ export const userValuesSessions = sqliteTable("user_values_sessions", {
     isCustom: boolean;
   }>>().notNull(),
   // Store all values rankings if needed
-  allValues: text("all_values", { mode: "json" }).$type<Array<{
+  allValues: jsonb("all_values").$type<Array<{
     id: number;
     score: number;
   }>>(),
+  // Store progress for incomplete sessions
+  progress: jsonb("progress").$type<{
+    phase: 'screening' | 'refinement' | 'rating';
+    completedSets: number;
+    totalSets: number;
+    currentValues?: any[];
+  }>(),
 }, (table) => ({
   userIdIdx: index("user_values_sessions_user_id_idx").on(table.userId),
   createdAtIdx: index("user_values_sessions_created_at_idx").on(table.createdAt),
 }));
 
 // Sessions table for authentication
-export const sessions = sqliteTable("sessions", {
+export const sessions = pgTable("sessions", {
   sid: text("sid").primaryKey(),
-  sess: text("sess", { mode: "json" }).notNull(),
-  expire: integer("expire", { mode: "timestamp" }).notNull(),
+  sess: jsonb("sess").notNull(),
+  expire: timestamp("expire").notNull(),
 }, (table) => ({
   expireIdx: index("sessions_expire_idx").on(table.expire),
 }));

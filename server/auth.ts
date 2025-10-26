@@ -1,8 +1,9 @@
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { Request, Response, NextFunction } from 'express';
-import { mkdir, readFile, writeFile } from 'fs/promises';
-import { join, dirname } from 'path';
+import { db } from './db.js';
+import { users, sessions, userValuesSessions } from '../shared/schema.js';
+import { eq, and, desc, isNull } from 'drizzle-orm';
 
 // Define types
 interface User {
@@ -10,19 +11,20 @@ interface User {
   email: string;
   password: string;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 interface Session {
-  id: string;
-  userId: string;
-  expiresAt: Date;
+  sid: string;
+  sess: any;
+  expire: Date;
 }
 
 interface UserValuesSession {
   id: string;
   userId: string;
   createdAt: Date;
-  completedAt?: Date;
+  completedAt?: Date | null;
   topValues: Array<{
     id: number;
     name: string;
@@ -34,77 +36,47 @@ interface UserValuesSession {
   allValues?: Array<{
     id: number;
     score: number;
-  }>;
+  }> | null;
   progress?: {
     phase: 'screening' | 'refinement' | 'rating';
     completedSets: number;
     totalSets: number;
     currentValues?: any[];
-  };
-}
-
-// File paths
-const DATA_DIR = process.env.DATA_DIR || './data';
-const USERS_FILE = join(DATA_DIR, 'users.json');
-const SESSIONS_FILE = join(DATA_DIR, 'sessions.json');
-const VALUES_SESSIONS_FILE = join(DATA_DIR, 'values-sessions.json');
-
-// Initialize data directory
-let initialized = false;
-async function ensureDataDir() {
-  if (!initialized) {
-    await mkdir(DATA_DIR, { recursive: true }).catch(() => {});
-    initialized = true;
-  }
-}
-
-// Helper functions to read/write JSON files
-async function readJsonFile<T>(filePath: string, defaultValue: T): Promise<T> {
-  await ensureDataDir();
-  try {
-    const content = await readFile(filePath, 'utf-8');
-    return JSON.parse(content);
-  } catch {
-    return defaultValue;
-  }
-}
-
-async function writeJsonFile<T>(filePath: string, data: T): Promise<void> {
-  await ensureDataDir();
-  await writeFile(filePath, JSON.stringify(data, null, 2));
+  } | null;
 }
 
 // User management
 export async function createUser(email: string, password: string): Promise<User | null> {
-  const users = await readJsonFile<User[]>(USERS_FILE, []);
-  
-  // Check if user already exists
-  if (users.find(u => u.email === email)) {
+  try {
+    // Check if user already exists
+    const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1);
+
+    if (existingUser.length > 0) {
+      return null;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await db.insert(users).values({
+      id: randomUUID(),
+      email,
+      password: hashedPassword,
+    }).returning();
+
+    return newUser[0] as User;
+  } catch (error) {
+    console.error('Error creating user:', error);
     return null;
   }
-  
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser: User = {
-    id: randomUUID(),
-    email,
-    password: hashedPassword,
-    createdAt: new Date(),
-  };
-  
-  users.push(newUser);
-  await writeJsonFile(USERS_FILE, users);
-  
-  return newUser;
 }
 
 export async function findUserByEmail(email: string): Promise<User | null> {
-  const users = await readJsonFile<User[]>(USERS_FILE, []);
-  return users.find(u => u.email === email) || null;
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return result[0] as User || null;
 }
 
 export async function findUserById(id: string): Promise<User | null> {
-  const users = await readJsonFile<User[]>(USERS_FILE, []);
-  return users.find(u => u.id === id) || null;
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result[0] as User || null;
 }
 
 export async function validatePassword(user: User, password: string): Promise<boolean> {
@@ -112,129 +84,150 @@ export async function validatePassword(user: User, password: string): Promise<bo
 }
 
 // Session management
-export async function createSession(userId: string): Promise<Session> {
-  const sessions = await readJsonFile<Session[]>(SESSIONS_FILE, []);
-  
-  // Clean up expired sessions
-  const now = new Date();
-  const activeSessions = sessions.filter(s => new Date(s.expiresAt) > now);
-  
-  const newSession: Session = {
-    id: randomUUID(),
+export async function createSession(userId: string): Promise<{ id: string; userId: string; expiresAt: Date }> {
+  const sessionId = randomUUID();
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+  await db.insert(sessions).values({
+    sid: sessionId,
+    sess: { userId },
+    expire: expiresAt,
+  });
+
+  return {
+    id: sessionId,
     userId,
-    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+    expiresAt,
   };
-  
-  activeSessions.push(newSession);
-  await writeJsonFile(SESSIONS_FILE, activeSessions);
-  
-  return newSession;
 }
 
-export async function findSession(sessionId: string): Promise<Session | null> {
-  const sessions = await readJsonFile<Session[]>(SESSIONS_FILE, []);
-  const session = sessions.find(s => s.id === sessionId);
-  
-  if (!session) return null;
-  
+export async function findSession(sessionId: string): Promise<{ id: string; userId: string; expiresAt: Date } | null> {
+  const result = await db.select().from(sessions).where(eq(sessions.sid, sessionId)).limit(1);
+
+  if (!result || result.length === 0) {
+    return null;
+  }
+
+  const session = result[0];
+
   // Check if expired
-  if (new Date(session.expiresAt) < new Date()) {
+  if (new Date(session.expire) < new Date()) {
     await deleteSession(sessionId);
     return null;
   }
-  
-  return session;
+
+  return {
+    id: session.sid,
+    userId: (session.sess as any).userId,
+    expiresAt: new Date(session.expire),
+  };
 }
 
 export async function deleteSession(sessionId: string): Promise<void> {
-  const sessions = await readJsonFile<Session[]>(SESSIONS_FILE, []);
-  const filtered = sessions.filter(s => s.id !== sessionId);
-  await writeJsonFile(SESSIONS_FILE, filtered);
+  await db.delete(sessions).where(eq(sessions.sid, sessionId));
 }
 
 // Values sessions management
 export async function saveValuesSession(session: Omit<UserValuesSession, 'id' | 'createdAt'>): Promise<UserValuesSession> {
-  const sessions = await readJsonFile<UserValuesSession[]>(VALUES_SESSIONS_FILE, []);
-  
   // Check if there's an incomplete session for this user
-  const existingIncompleteIndex = sessions.findIndex(
-    s => s.userId === session.userId && !s.completedAt
-  );
-  
-  if (existingIncompleteIndex !== -1 && session.progress) {
+  const existingIncompleteSessions = await db
+    .select()
+    .from(userValuesSessions)
+    .where(
+      and(
+        eq(userValuesSessions.userId, session.userId),
+        isNull(userValuesSessions.completedAt)
+      )
+    );
+
+  if (existingIncompleteSessions.length > 0 && session.progress) {
     // Update existing incomplete session
-    sessions[existingIncompleteIndex] = {
-      ...sessions[existingIncompleteIndex],
-      ...session,
-    };
-    await writeJsonFile(VALUES_SESSIONS_FILE, sessions);
-    return sessions[existingIncompleteIndex];
+    const updated = await db
+      .update(userValuesSessions)
+      .set({
+        topValues: session.topValues,
+        allValues: session.allValues || null,
+        progress: session.progress || null,
+        completedAt: session.completedAt || null,
+      })
+      .where(eq(userValuesSessions.id, existingIncompleteSessions[0].id))
+      .returning();
+
+    return updated[0] as UserValuesSession;
   } else {
     // If saving a completed session, remove any incomplete sessions for this user
     if (session.completedAt) {
-      const filteredSessions = sessions.filter(
-        s => !(s.userId === session.userId && !s.completedAt)
-      );
-      
-      // Create new completed session
-      const newSession: UserValuesSession = {
-        id: randomUUID(),
-        createdAt: new Date(),
-        ...session,
-      };
-      
-      filteredSessions.push(newSession);
-      await writeJsonFile(VALUES_SESSIONS_FILE, filteredSessions);
-      
-      return newSession;
-    } else {
-      // Create new session
-      const newSession: UserValuesSession = {
-        id: randomUUID(),
-        createdAt: new Date(),
-        ...session,
-      };
-      
-      sessions.push(newSession);
-      await writeJsonFile(VALUES_SESSIONS_FILE, sessions);
-      
-      return newSession;
+      await db
+        .delete(userValuesSessions)
+        .where(
+          and(
+            eq(userValuesSessions.userId, session.userId),
+            isNull(userValuesSessions.completedAt)
+          )
+        );
     }
+
+    // Create new session
+    const newSession = await db
+      .insert(userValuesSessions)
+      .values({
+        id: randomUUID(),
+        userId: session.userId,
+        completedAt: session.completedAt || null,
+        topValues: session.topValues,
+        allValues: session.allValues || null,
+        progress: session.progress || null,
+      })
+      .returning();
+
+    return newSession[0] as UserValuesSession;
   }
 }
 
 export async function getUserValuesSessions(userId: string): Promise<UserValuesSession[]> {
-  const sessions = await readJsonFile<UserValuesSession[]>(VALUES_SESSIONS_FILE, []);
-  return sessions
-    .filter(s => s.userId === userId)
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const result = await db
+    .select()
+    .from(userValuesSessions)
+    .where(eq(userValuesSessions.userId, userId))
+    .orderBy(desc(userValuesSessions.createdAt));
+
+  return result as UserValuesSession[];
 }
 
 export async function getLatestIncompleteSession(userId: string): Promise<UserValuesSession | null> {
-  const sessions = await readJsonFile<UserValuesSession[]>(VALUES_SESSIONS_FILE, []);
-  return sessions
-    .filter(s => s.userId === userId && !s.completedAt)
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] || null;
+  const result = await db
+    .select()
+    .from(userValuesSessions)
+    .where(
+      and(
+        eq(userValuesSessions.userId, userId),
+        isNull(userValuesSessions.completedAt)
+      )
+    )
+    .orderBy(desc(userValuesSessions.createdAt))
+    .limit(1);
+
+  return result[0] as UserValuesSession || null;
 }
 
 // Middleware
 export async function requireAuth(req: Request & { user?: User }, res: Response, next: NextFunction) {
   const sessionId = req.headers.authorization?.replace('Bearer ', '');
-  
+
   if (!sessionId) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  
+
   const session = await findSession(sessionId);
   if (!session) {
     return res.status(401).json({ error: 'Invalid or expired session' });
   }
-  
+
   const user = await findUserById(session.userId);
   if (!user) {
     return res.status(401).json({ error: 'User not found' });
   }
-  
+
   req.user = user;
   next();
 }
