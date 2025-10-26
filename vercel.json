@@ -6,10 +6,5 @@
       "source": "/api/:path*",
       "destination": "/api"
     }
-  ],
-  "functions": {
-    "api/*.ts": {
-      "runtime": "nodejs20.x"
-    }
-  }
+  ]
 }
