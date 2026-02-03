@@ -9,3 +9,4 @@ data/
 .env
 .vercel
 .gemini-clipboard/
+.playwright-mcp/

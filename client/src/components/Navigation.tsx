@@ -1,12 +1,12 @@
-import { useLocation } from 'wouter';
 import { useAuthStore } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { User, LogIn } from 'lucide-react';
 import { useState } from 'react';
 import { AuthModal } from './AuthModal';
+import { useGuardedNavigation } from './NavigationGuard';
 
 export function Navigation() {
-  const [, navigate] = useLocation();
+  const { guardedNavigate } = useGuardedNavigation();
   const { isAuthenticated, user } = useAuthStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
   
@@ -14,8 +14,8 @@ export function Navigation() {
     <>
       <header className="border-b">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <button 
-            onClick={() => navigate('/')} 
+          <button
+            onClick={() => guardedNavigate('/')}
             className="text-xl font-bold hover:opacity-80 transition-opacity"
           >
             Values Compass
@@ -27,10 +27,10 @@ export function Navigation() {
                 <span className="text-sm text-muted-foreground hidden sm:inline">
                   {user?.email}
                 </span>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
-                  onClick={() => navigate('/profile')}
+                  onClick={() => guardedNavigate('/profile')}
                 >
                   <User className="h-4 w-4 mr-2" />
                   Profile

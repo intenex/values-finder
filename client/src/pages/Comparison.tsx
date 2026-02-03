@@ -3,11 +3,12 @@ import { useLocation } from "wouter";
 import { ComparisonCard } from "@/components/ComparisonCard";
 import { MaxDiffCard } from "@/components/MaxDiffCard";
 import { EncouragementToast } from "@/components/EncouragementToast";
+import { ProgressWarningBanner } from "@/components/ProgressWarningBanner";
 import { useValuesStore } from "@/lib/store";
 import { useAuthStore } from "@/lib/auth";
+import { useBeforeUnload } from "@/hooks/useBeforeUnload";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Cloud, CloudOff } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,6 +49,9 @@ export default function Comparison() {
     loadProgress,
     reset,
   } = useValuesStore();
+
+  // Warn unauthenticated users when they try to close/refresh the page
+  useBeforeUnload();
 
   // Load saved progress on mount if authenticated
   useEffect(() => {
@@ -238,12 +242,7 @@ export default function Comparison() {
                   ? `56 rounds to identify your top values`
                   : `15 final rounds to rank your most important values`}
               </p>
-              {isAuthenticated && currentRoundNumber > 0 && (
-                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                  <Cloud className="h-3 w-3" />
-                  <span>Progress saved automatically</span>
-                </div>
-              )}
+              <ProgressWarningBanner currentRoundNumber={currentRoundNumber} />
             </div>
 
             <div className="space-y-3">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuthStore } from '@/lib/auth';
+import { useValuesStore } from '@/lib/store';
 import {
   Dialog,
   DialogContent,
@@ -25,41 +26,68 @@ export function AuthModal({ open, onOpenChange, onSuccess }: AuthModalProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { login, signup } = useAuthStore();
-  
+  const { login, signup, saveProgress } = useAuthStore();
+  const { values, maxDiffSorter } = useValuesStore();
+
+  // Helper to save progress after successful auth
+  const saveProgressIfExists = async () => {
+    const stats = maxDiffSorter.getStats();
+    if (stats.completedSets > 0) {
+      try {
+        await saveProgress(
+          {
+            phase: stats.phase,
+            completedSets: stats.completedSets,
+            totalSets: stats.totalSets,
+          },
+          [],
+          values.map(v => ({ id: v.id, score: v.score }))
+        );
+      } catch (err) {
+        console.error('Failed to save progress after auth:', err);
+      }
+    }
+  };
+
   const handleLogin = async () => {
     setError('');
     setLoading(true);
-    
+
     const result = await login(email, password);
-    setLoading(false);
-    
+
     if (result.success) {
+      // Auto-save any existing progress
+      await saveProgressIfExists();
+      setLoading(false);
       onOpenChange(false);
       onSuccess?.();
       resetForm();
     } else {
+      setLoading(false);
       setError(result.error || 'Login failed');
     }
   };
-  
+
   const handleSignup = async () => {
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-    
+
     setError('');
     setLoading(true);
-    
+
     const result = await signup(email, password);
-    setLoading(false);
-    
+
     if (result.success) {
+      // Auto-save any existing progress
+      await saveProgressIfExists();
+      setLoading(false);
       onOpenChange(false);
       onSuccess?.();
       resetForm();
     } else {
+      setLoading(false);
       setError(result.error || 'Signup failed');
     }
   };
