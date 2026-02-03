@@ -7,3 +7,5 @@ vite.config.ts.*
 data/
 *.db
 .env
+.vercel
+.gemini-clipboard/
