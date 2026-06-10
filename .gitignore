@@ -1,12 +1,35 @@
-node_modules
-dist
-.DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz
-data/
-*.db
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+
+# testing
+/coverage
+/test-results/
+/playwright-report/
+
+# env files
 .env
+.env*
+!.env.example
+
+# database backups (contain password hashes — never commit)
+/backups/
+
+# misc
+.DS_Store
+*.pem
+*.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 .vercel
-.gemini-clipboard/
 .playwright-mcp/
+.gemini-clipboard/
+data/
+dist
