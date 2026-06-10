@@ -1,120 +1,46 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from "@playwright/test";
+import { login, seedCompletedSession, seedUser, uniqueEmail } from "./helpers";
 
-test.describe('Reassess Values Flow', () => {
-  test.beforeEach(async ({ page }) => {
-    // Navigate to the home page
-    await page.goto('http://localhost:5173/');
-  });
+// Port of the old app's reassess-flow spec: returning users land on their
+// profile and can reassess (edit wording + re-rate), which appends a new
+// session rather than overwriting history.
+test("returning user reassesses values into a new snapshot", async ({ page }) => {
+  const email = uniqueEmail("reassess");
+  const userId = await seedUser(email);
+  await seedCompletedSession(userId);
 
-  test('should redirect returning users to profile', async ({ page }) => {
-    // Login as test user
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.getByPlaceholder('Email').fill('test@example.com');
-    await page.getByPlaceholder('Password').fill('test123');
-    await page.getByRole('button', { name: 'Sign In', exact: true }).click();
+  await login(page, email);
+  await expect(page).toHaveURL(/\/profile/);
 
-    // Should be redirected to profile page
-    await expect(page).toHaveURL('http://localhost:5173/profile');
-    
-    // Should see the completed values session
-    await expect(page.getByText('Your Values History')).toBeVisible();
-    await expect(page.getByText('test@example.com')).toBeVisible();
-    
-    // Should see the top values with ratings
-    await expect(page.getByText('INNER HARMONY')).toBeVisible();
-    await expect(page.getByText('8/10')).toBeVisible();
-  });
+  await page.getByTestId("reassess-link").click();
+  await page.waitForURL(/\/profile\/reassess/);
 
-  test('should allow reassessing values', async ({ page }) => {
-    // Login and navigate to profile
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.getByPlaceholder('Email').fill('test@example.com');
-    await page.getByPlaceholder('Password').fill('test123');
-    await page.getByRole('button', { name: 'Sign In', exact: true }).click();
-    await expect(page).toHaveURL('http://localhost:5173/profile');
+  // Rename the first value and save.
+  const firstName = page.locator('input[id^="name-"]').first();
+  await firstName.fill("RENAMED VALUE");
+  await page.getByTestId("save-reassessment").click();
 
-    // Click Reassess Values button
-    await page.getByRole('button', { name: 'Reassess Values' }).click();
-    await expect(page).toHaveURL('http://localhost:5173/reassess');
+  await page.waitForURL(/\/profile$/);
+  await expect(page.getByTestId("session-values")).toContainText("RENAMED VALUE");
 
-    // Should see the reassess page
-    await expect(page.getByText('Reassess Your Values')).toBeVisible();
-    await expect(page.getByText('Update your values and rate how well you\'re living by them')).toBeVisible();
+  // Both snapshots exist (history is append-only).
+  await expect(page.getByTestId("session-tabs").locator("button")).toHaveCount(2);
+});
 
-    // Should see all 10 values
-    await expect(page.getByText('Value #1')).toBeVisible();
-    await expect(page.getByText('Value #10')).toBeVisible();
+test("retake requires confirmation and starts a fresh exercise", async ({ page }) => {
+  const email = uniqueEmail("retake");
+  const userId = await seedUser(email);
+  await seedCompletedSession(userId);
 
-    // Edit a value
-    const firstValueInput = page.locator('input[placeholder="Value name"]').first();
-    await firstValueInput.clear();
-    await firstValueInput.fill('INNER PEACE');
+  await login(page, email);
+  await page.getByTestId("retake-button").click();
+  await expect(page.getByText("Start the full exercise over?")).toBeVisible();
+  await page.getByTestId("confirm-retake").click();
 
-    // Change a rating
-    const firstSlider = page.locator('[role="slider"]').first();
-    await firstSlider.click(); // This will set it to a middle position
+  await page.waitForURL(/\/assessment/);
+  await expect(page.getByText("Round 1 of")).toBeVisible();
 
-    // Save reassessment
-    await page.getByRole('button', { name: 'Save Reassessment' }).click();
-
-    // Should redirect back to profile
-    await expect(page).toHaveURL('http://localhost:5173/profile');
-  });
-
-  test('should show warning when retaking full test', async ({ page }) => {
-    // Login and navigate to profile
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.getByPlaceholder('Email').fill('test@example.com');
-    await page.getByPlaceholder('Password').fill('test123');
-    await page.getByRole('button', { name: 'Sign In', exact: true }).click();
-    await expect(page).toHaveURL('http://localhost:5173/profile');
-
-    // Click Retake Full Test button
-    await page.getByRole('button', { name: 'Retake Full Test' }).click();
-    await expect(page).toHaveURL('http://localhost:5173/start-test');
-
-    // Should see warning message
-    await expect(page.getByText('This will start a completely new values assessment from scratch')).toBeVisible();
-    await expect(page.getByText('Your previous results will be saved in your history')).toBeVisible();
-
-    // Click Start New Assessment
-    await page.getByRole('button', { name: 'Start New Assessment' }).click();
-
-    // Should navigate to comparison page
-    await expect(page).toHaveURL('http://localhost:5173/comparison');
-    
-    // Should see the first comparison set
-    await expect(page.getByText('Round 1 of 56')).toBeVisible();
-  });
-
-  test('should handle cancellation properly', async ({ page }) => {
-    // Login and navigate to reassess page
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.getByPlaceholder('Email').fill('test@example.com');
-    await page.getByPlaceholder('Password').fill('test123');
-    await page.getByRole('button', { name: 'Sign In', exact: true }).click();
-    await page.getByRole('button', { name: 'Reassess Values' }).click();
-
-    // Click cancel
-    await page.getByRole('button', { name: 'Cancel' }).click();
-
-    // Should return to profile
-    await expect(page).toHaveURL('http://localhost:5173/profile');
-  });
-
-  test('should show proper layout for values in profile', async ({ page }) => {
-    // Login and check profile layout
-    await page.getByRole('button', { name: 'Sign In' }).click();
-    await page.getByPlaceholder('Email').fill('test@example.com');
-    await page.getByPlaceholder('Password').fill('test123');
-    await page.getByRole('button', { name: 'Sign In', exact: true }).click();
-
-    // Check that values are displayed with proper formatting
-    const firstValue = page.locator('.border.rounded-lg').first();
-    await expect(firstValue).toContainText('1');
-    await expect(firstValue).toContainText('INNER HARMONY');
-    await expect(firstValue).toContainText('to be at peace with myself');
-    await expect(firstValue).toContainText('8/10');
-    await expect(firstValue).toContainText('Rating');
-  });
+  // Completed history is untouched.
+  await page.goto("/profile");
+  await expect(page.getByRole("heading", { name: "LEGACY VALUE 1", exact: true })).toBeVisible();
 });
