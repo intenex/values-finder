@@ -1,110 +1,66 @@
-# Janusz Values App
+# Values
 
-A web application that helps users discover and prioritize their personal values through an interactive card sorting exercise, particularly designed for meditation practitioners and changemakers.
+A guided personal-values exercise: work through 93 values in ~71 rounds of
+"most / least important" choices (a MaxDiff card sort), surface your top ten,
+put them in your own words, and rate how fully you're living each one.
+Results are saved per account; you can revisit, reassess, and retake over time.
 
-## Overview
+## Stack
 
-The Janusz Values App guides users through a thoughtful process of value discovery using a "hot or not" style comparison system. Users compare pairs of values, customize their top selections, rate how well they're living according to each value, and export their final values list as an image.
+- **Next.js (App Router)** + React, TypeScript, Tailwind v4, shadcn/ui
+- **Neon Postgres** via Drizzle ORM (`POSTGRES_URL`)
+- Custom email/password auth with httpOnly cookie sessions (bcrypt)
+- Deployed on Vercel (zero config — no `vercel.json` needed)
 
-## Features
+## How the assessment stays deterministic
 
-- **Interactive Value Comparison**: Compare pairs of values through 25-45 rounds
-- **Smart Algorithm**: Uses an Elo-like rating system to efficiently determine your value rankings
-- **Customization**: Edit names and descriptions of your top 10 values
-- **Self-Assessment**: Rate how well you've lived according to each value (1-10 scale)
-- **Export Functionality**: Save your final values list as a PNG image
-- **93 Curated Values**: Including both standard values and specialized values for meditators/changemakers
+The original app regenerated its question sets with `Math.random()` on every
+page load, so refreshing could change a user's results. The rewrite makes the
+assessment a pure function of stored data:
 
-## Technology Stack
+- On start, round sets are generated from a stored 32-bit seed
+  (`src/lib/engine/generate.ts`) and **persisted** in `assessments.sets`.
+- Every answer is appended to `assessments.choices`.
+- All state (current round, scores, top 25, top 10) is derived by replaying
+  choices over the stored sets (`src/lib/engine/replay.ts`) — no randomness,
+  no clocks. Refresh, back-navigation, and cross-device resume always agree.
+- Users can go back and edit any earlier answer. Edits that change the top-25
+  pool regenerate just the 15 refinement rounds; everything else is preserved
+  (`src/lib/engine/edit.ts`).
 
-### Frontend
-- React 18 with TypeScript
-- Vite
-- Tailwind CSS
-- Shadcn/ui components
-- Zustand for state management
-- Wouter for routing
-- Framer Motion for animations
-
-### Backend
-- Express with TypeScript
-- Drizzle ORM
-- Session management
-
-## Getting Started
-
-### Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone [repository-url]
-cd janusz-values-app
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
-
-The application will be available at `http://localhost:3000` (or the port specified by the PORT environment variable)
-
-## Project Structure
-
-```
-/client/                # Frontend React application
-  ├── src/
-  │   ├── pages/       # Main application pages
-  │   ├── components/  # Reusable UI components
-  │   ├── lib/         # Core logic and utilities
-  │   └── hooks/       # Custom React hooks
-/server/               # Backend Express server
-  ├── index.ts         # Server entry point
-  └── routes.ts        # API routes
-/shared/               # Shared types and schemas
-```
-
-## How It Works
-
-1. **Introduction**: Users start at the home page and learn about the Values Compass Exercise
-2. **Comparison Phase**: Users compare pairs of values, selecting which resonates more
-3. **Refinement**: The algorithm focuses on top contenders to determine final rankings
-4. **Customization**: Users can edit their top 10 values to better reflect personal interpretations
-5. **Rating**: Users rate how well they've been living according to each value
-6. **Export**: Final values list can be exported as an image for future reference
+Completed results are written to the `user_values_sessions` table in the same
+format the original app used, so historical results render unchanged.
 
 ## Development
 
-### Available Scripts
+```bash
+npm install
+# point at a local database (never the production URL):
+echo "POSTGRES_URL=postgresql://$USER@localhost:5432/janusz_values_dev" > .env.local
+createdb janusz_values_dev
+npm run db:migrate
+node scripts/seed-dev-user.mjs   # legacy-tester@example.com / test1234
+npm run dev
+```
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run typecheck` - Run TypeScript type checking
+## Testing
 
-### Key Components
+```bash
+npm test          # vitest — engine unit tests (determinism, scoring, edits)
+npm run test:e2e  # playwright — auth, full 71-round flow, determinism,
+                  # back-edit, resume, reassess (uses the local dev DB)
+npm run check     # tsc --noEmit
+```
 
-- **ValueCard**: Displays individual values with descriptions
-- **ComparisonCard**: Handles the value comparison interface
-- **Elo Algorithm**: Modified Elo rating system for value ranking
-- **State Management**: Zustand store managing the entire user journey
+## Database
 
-## Contributing
+Migrations live in `drizzle/` and are applied with `npm run db:migrate`
+(`drizzle-kit migrate`). The baseline migration is idempotent: it no-ops on
+tables that already exist in the production database. Do not use
+`drizzle-kit push` against production.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-[Add license information here]
-
-## Acknowledgments
-
-Designed specifically for meditation practitioners and changemakers seeking to align their actions with their deepest values.
+Schema: `users`, `user_values_sessions` (results history, shared format with
+the legacy app), `auth_sessions` (cookie sessions, hashed tokens),
+`assessments` (in-flight exercises: seed, sets, choices, customizations,
+ratings). `sessions` and `values` are legacy tables kept for safety and
+unused by the app.
