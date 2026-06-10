@@ -1,26 +1,85 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
+/* Calm & warm: soft paper neutrals, clay primary, sage secondary.
+   Selection feedback is deliberately non-judgmental: "most important" is
+   warm amber, "least important" is a cool slate blue — never red. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: oklch(0.975 0.009 84);
+  --foreground: oklch(0.3 0.012 60);
+  --card: oklch(0.995 0.004 90);
+  --card-foreground: oklch(0.3 0.012 60);
+  --popover: oklch(0.995 0.004 90);
+  --popover-foreground: oklch(0.3 0.012 60);
+  --primary: oklch(0.52 0.1 45);
+  --primary-foreground: oklch(0.985 0.006 85);
+  --secondary: oklch(0.93 0.02 130);
+  --secondary-foreground: oklch(0.36 0.04 140);
+  --muted: oklch(0.945 0.012 84);
+  --muted-foreground: oklch(0.52 0.015 65);
+  --accent: oklch(0.93 0.03 75);
+  --accent-foreground: oklch(0.4 0.06 50);
+  --destructive: oklch(0.55 0.13 30);
+  --destructive-foreground: oklch(0.985 0.006 85);
+  --border: oklch(0.9 0.014 80);
+  --input: oklch(0.9 0.014 80);
+  --ring: oklch(0.52 0.1 45);
+
+  --most: oklch(0.72 0.13 70);
+  --most-soft: oklch(0.95 0.04 80);
+  --most-foreground: oklch(0.38 0.08 55);
+  --least: oklch(0.58 0.06 255);
+  --least-soft: oklch(0.94 0.02 255);
+  --least-foreground: oklch(0.4 0.06 255);
+
+  --radius: 0.75rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-most: var(--most);
+  --color-most-soft: var(--most-soft);
+  --color-most-foreground: var(--most-foreground);
+  --color-least: var(--least);
+  --color-least-soft: var(--least-soft);
+  --color-least-foreground: var(--least-foreground);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+  }
+  .font-display {
+    font-family: var(--font-display);
+  }
 }
