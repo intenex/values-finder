@@ -31,9 +31,7 @@ export default async function ResultsPage() {
           Your ten most important values
         </h1>
         <p className="mt-3 mb-10 text-muted-foreground">
-          Out of {state.totalRounds} rounds of choices, these are the values that
-          rose to the top. Next you can fine-tune their wording, then reflect on
-          how fully you&apos;re living each one.
+          {`Out of ${state.totalRounds} rounds of choices, these are the values that rose to the top. Next you can fine-tune their wording, then reflect on how fully you're living each one.`}
         </p>
 
         <ol className="space-y-3" data-testid="top-ten">

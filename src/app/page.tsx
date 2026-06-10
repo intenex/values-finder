@@ -19,10 +19,7 @@ export default async function HomePage() {
             What matters most to you?
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
-            Work through {VALUE_COUNT} values in a series of simple choices and
-            surface the ten that matter most — then reflect on how fully
-            you&apos;re living them. Your progress is saved as you go, so you can
-            pause anytime and pick up where you left off.
+            {`Work through ${VALUE_COUNT} values in a series of simple choices and surface the ten that matter most — then reflect on how fully you're living them. Your progress is saved as you go, so you can pause anytime and pick up where you left off.`}
           </p>
           <div className="mt-10 flex justify-center gap-3">
             <Button size="lg" asChild>
