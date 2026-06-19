@@ -198,7 +198,7 @@ export function ProfileView({ sessions, hasActiveAssessment, celebrate }: Profil
           <div className="mt-4 flex justify-end">
             <Button variant="outline" size="sm" onClick={exportImage} disabled={exporting}>
               <Download className="size-4" />
-              {exporting ? "Exporting…" : "Export as image"}
+              {exporting ? "Exporting…" : "Export Results"}
             </Button>
           </div>
         </>

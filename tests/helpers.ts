@@ -59,12 +59,24 @@ export async function login(page: Page, email: string): Promise<void> {
   await page.waitForURL(/\/(assessment|profile)/);
 }
 
+/** Sign up a fresh account and step through the intro into the rounds. */
 export async function signup(page: Page, email: string): Promise<void> {
   await page.goto("/signup");
   await page.fill("#email", email);
   await page.fill("#password", TEST_PASSWORD);
   await page.click("button[type=submit]");
-  await page.waitForURL(/\/assessment/);
+  await page.waitForURL(/\/assessment\/intro/);
+  await page.getByTestId("begin-button").click();
+  await page.waitForURL(/\/assessment$/);
+}
+
+/** Sign up but stop on the intro page (for testing the intro itself). */
+export async function signupToIntro(page: Page, email: string): Promise<void> {
+  await page.goto("/signup");
+  await page.fill("#email", email);
+  await page.fill("#password", TEST_PASSWORD);
+  await page.click("button[type=submit]");
+  await page.waitForURL(/\/assessment\/intro/);
 }
 
 /** Answer the currently shown round: first card = most, last card = least. */

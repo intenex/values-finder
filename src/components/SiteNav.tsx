@@ -16,7 +16,7 @@ export function SiteNav({ email }: { email?: string | null }) {
                 <Link href="/assessment">Exercise</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/profile">Profile</Link>
+                <Link href="/profile">Results</Link>
               </Button>
               <form action={logout}>
                 <Button variant="ghost" size="sm" type="submit">

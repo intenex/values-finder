@@ -1,12 +1,19 @@
 "use server";
 
-import { and, eq, isNotNull } from "drizzle-orm";
+import { and, eq, isNotNull, sql } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { getActiveAssessment } from "@/lib/assessment";
 import { db } from "@/lib/db";
-import { assessments, users, userValuesSessions } from "@/lib/db/schema";
+import { users, userValuesSessions } from "@/lib/db/schema";
 import { hashPassword, verifyPassword } from "./password";
 import { createSession, destroySession, getCurrentUser } from "./session";
+
+// Match emails case-insensitively. Legacy accounts created by the old app were
+// stored with the exact casing the user typed (e.g. "janusz@DeepMindfulness.io"),
+// so a lowercased lookup would miss them — which previously let people get
+// "invalid password" on a real account and then create an accidental duplicate.
+const emailMatches = (email: string) => sql`lower(${users.email}) = ${email}`;
 
 const credentialsSchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid email address"),
@@ -18,17 +25,14 @@ export interface AuthFormState {
 }
 
 /**
- * After signing in, send people into the exercise (per the feedback report:
- * "Successful sign in should cause the exercise to open"). Returning users
- * with a finished assessment and nothing in flight land on their profile.
+ * Where to send someone after they sign in:
+ *  - mid-exercise (answers already recorded) → straight back into the rounds;
+ *  - has finished results, nothing in flight → their results;
+ *  - brand new / not yet started → the explanation page before the exercise.
  */
 async function postLoginDestination(userId: string): Promise<string> {
-  const [active] = await db
-    .select({ id: assessments.id })
-    .from(assessments)
-    .where(and(eq(assessments.userId, userId), eq(assessments.status, "active")))
-    .limit(1);
-  if (active) return "/assessment";
+  const active = await getActiveAssessment(userId);
+  if (active && active.choices.length > 0) return "/assessment";
 
   const [completed] = await db
     .select({ id: userValuesSessions.id })
@@ -40,7 +44,7 @@ async function postLoginDestination(userId: string): Promise<string> {
       ),
     )
     .limit(1);
-  return completed ? "/profile" : "/assessment";
+  return completed ? "/profile" : "/assessment/intro";
 }
 
 function safeNext(next: unknown): string | null {
@@ -62,7 +66,7 @@ export async function login(
   }
   const { email, password } = parsed.data;
 
-  const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  const [user] = await db.select().from(users).where(emailMatches(email)).limit(1);
   if (!user || !(await verifyPassword(password, user.password))) {
     return { error: "Invalid email or password" };
   }
@@ -87,19 +91,29 @@ export async function signup(
   const [existing] = await db
     .select({ id: users.id })
     .from(users)
-    .where(eq(users.email, email))
+    .where(emailMatches(email))
     .limit(1);
   if (existing) {
     return { error: "An account with this email already exists" };
   }
 
-  const [user] = await db
-    .insert(users)
-    .values({ email, password: await hashPassword(password) })
-    .returning();
+  let user: { id: string } | undefined;
+  try {
+    const inserted = await db
+      .insert(users)
+      .values({ email, password: await hashPassword(password) })
+      .returning({ id: users.id });
+    user = inserted[0];
+  } catch {
+    // Case-insensitive unique index raced with a concurrent signup.
+    return { error: "An account with this email already exists" };
+  }
+  if (!user) {
+    return { error: "Something went wrong creating your account" };
+  }
 
   await createSession(user.id);
-  redirect(safeNext(formData.get("next")) ?? "/assessment");
+  redirect(safeNext(formData.get("next")) ?? "/assessment/intro");
 }
 
 export async function logout(): Promise<void> {

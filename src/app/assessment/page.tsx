@@ -27,6 +27,7 @@ export default async function AssessmentPage() {
           assessmentId={assessment.id}
           initialSets={assessment.sets}
           initialChoices={assessment.choices}
+          initialCustomizations={assessment.customizations ?? {}}
         />
       </main>
     </>

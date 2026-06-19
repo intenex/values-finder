@@ -23,7 +23,7 @@ export default async function HomePage() {
           </p>
           <div className="mt-10 flex justify-center gap-3">
             <Button size="lg" asChild>
-              <Link href={user ? "/assessment" : "/signup"}>
+              <Link href={user ? "/assessment/intro" : "/signup"}>
                 {user ? "Continue your exercise" : "Begin"}
               </Link>
             </Button>

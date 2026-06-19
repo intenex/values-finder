@@ -1,10 +1,10 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { editChoice, submitChoice } from "./actions";
+import { customizeValue, editChoice, submitChoice, type Customizations } from "./actions";
 import { ValueCard, type CardRole } from "@/components/ValueCard";
 import {
   AlertDialog,
@@ -16,7 +16,18 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 import type { AssessmentChoice, AssessmentSets } from "@/lib/db/schema";
 import { getValue } from "@/lib/values";
 
@@ -24,6 +35,7 @@ interface AssessmentRunnerProps {
   assessmentId: string;
   initialSets: AssessmentSets;
   initialChoices: AssessmentChoice[];
+  initialCustomizations: Customizations;
 }
 
 interface Selection {
@@ -41,14 +53,20 @@ export function AssessmentRunner({
   assessmentId,
   initialSets,
   initialChoices,
+  initialCustomizations,
 }: AssessmentRunnerProps) {
   const router = useRouter();
   const [sets, setSets] = useState(initialSets);
   const [choices, setChoices] = useState(initialChoices);
+  const [customizations, setCustomizations] = useState<Customizations>(initialCustomizations);
   const [cursor, setCursor] = useState(initialChoices.length);
   const [sel, setSel] = useState<Selection>({ m: null, l: null });
   const [saving, setSaving] = useState(false);
   const [invalidationOpen, setInvalidationOpen] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [draftName, setDraftName] = useState("");
+  const [draftDesc, setDraftDesc] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
   const autoAdvanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const screeningRounds = sets.screening.length;
@@ -64,6 +82,21 @@ export function AssessmentRunner({
   const existing = choices[cursor] as AssessmentChoice | undefined;
   const isEditingPast = cursor < answeredCount;
   const phaseLabel = cursor < screeningRounds ? "Discovering" : "Narrowing";
+
+  // Resolve a value's display name/description, honouring any edit the user made.
+  const display = useCallback(
+    (id: number) => {
+      const base = getValue(id);
+      const custom = customizations[id];
+      return {
+        id,
+        name: custom?.name ?? base.name,
+        description: custom?.description ?? base.description,
+        customized: Boolean(custom),
+      };
+    },
+    [customizations],
+  );
 
   // Reset the selection whenever the viewed round changes.
   useEffect(() => {
@@ -147,6 +180,39 @@ export function AssessmentRunner({
     }
   };
 
+  const openEditor = (id: number) => {
+    const v = display(id);
+    setEditId(id);
+    setDraftName(v.name);
+    setDraftDesc(v.description);
+  };
+
+  const saveValueEdit = async () => {
+    if (editId === null) return;
+    setSavingEdit(true);
+    const res = await customizeValue({
+      assessmentId,
+      valueId: editId,
+      name: draftName,
+      description: draftDesc,
+    });
+    setSavingEdit(false);
+    if (!res.ok) {
+      toast.error(res.error ?? "Could not save — please try again.");
+      return;
+    }
+    setCustomizations(res.customizations ?? {});
+    setEditId(null);
+    toast("Value updated.");
+  };
+
+  const resetEditorToOriginal = () => {
+    if (editId === null) return;
+    const base = getValue(editId);
+    setDraftName(base.name);
+    setDraftDesc(base.description);
+  };
+
   const roleFor = (id: number): CardRole =>
     sel.m === id ? "most" : sel.l === id ? "least" : null;
 
@@ -192,33 +258,40 @@ export function AssessmentRunner({
         <Progress value={(answeredCount / totalRounds) * 100} className="h-1.5" />
       </header>
 
-      <p className="mt-6 mb-5 text-center text-base text-muted-foreground">
+      <div className="mt-6 mb-5 text-center">
         {isEditingPast ? (
-          <>You answered this round before — change it if it no longer feels right.</>
-        ) : sel.m === null ? (
-          <>
-            Of these five, tap the value that matters{" "}
-            <strong className="text-most-foreground">most</strong> to you.
-          </>
-        ) : sel.l === null ? (
-          <>
-            Now tap the one that matters{" "}
-            <strong className="text-least-foreground">least</strong>.
-          </>
+          <p className="text-base text-muted-foreground">
+            You answered this round before — change it if it no longer feels right.
+          </p>
         ) : (
-          <>Locking in…</>
+          <>
+            <p className="text-base text-foreground">
+              Choose the value that matters{" "}
+              <strong className="font-semibold text-most-foreground">Most</strong> and{" "}
+              <strong className="font-semibold text-least-foreground">Least</strong> to
+              you.
+            </p>
+            <p className="mt-1.5 inline-flex items-center gap-1 text-sm text-muted-foreground">
+              You can edit any value or definition anytime — just tap the
+              <Pencil className="size-3.5" aria-hidden /> icon.
+            </p>
+          </>
         )}
-      </p>
+      </div>
 
       <div className="grid gap-3" data-testid="round-cards">
         {viewSet.map((id) => (
           <ValueCard
             key={`${cursor}-${id}`}
-            value={getValue(id)}
+            value={display(id)}
             role={roleFor(id)}
+            mostChosen={sel.m !== null}
+            leastChosen={sel.l !== null}
+            customized={Boolean(customizations[id])}
             disabled={saving}
             onTap={() => tapCard(id)}
             onAssign={(role) => assignRole(id, role)}
+            onEdit={() => openEditor(id)}
           />
         ))}
       </div>
@@ -251,6 +324,51 @@ export function AssessmentRunner({
           <ArrowRight className="size-4" />
         </Button>
       </footer>
+
+      <Dialog open={editId !== null} onOpenChange={(open) => !open && setEditId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit this value</DialogTitle>
+            <DialogDescription>
+              Reword the name or definition so it speaks in your own voice. Your
+              wording is used everywhere this value appears.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="edit-name">Name</Label>
+              <Input
+                id="edit-name"
+                value={draftName}
+                maxLength={60}
+                onChange={(e) => setDraftName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="edit-desc">What it means to you</Label>
+              <Textarea
+                id="edit-desc"
+                value={draftDesc}
+                maxLength={240}
+                rows={3}
+                onChange={(e) => setDraftDesc(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-between">
+            <Button type="button" variant="ghost" onClick={resetEditorToOriginal}>
+              Reset to original
+            </Button>
+            <Button
+              type="button"
+              onClick={saveValueEdit}
+              disabled={savingEdit || !draftName.trim() || !draftDesc.trim()}
+            >
+              {savingEdit ? "Saving…" : "Save"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={invalidationOpen} onOpenChange={setInvalidationOpen}>
         <AlertDialogContent>

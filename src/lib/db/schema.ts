@@ -16,13 +16,19 @@ import {
 // not be altered without a migration — they hold real user data.
 // ---------------------------------------------------------------------------
 
-export const users = pgTable("users", {
-  id: text("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: text("email").notNull().unique(),
-  password: text("password").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+export const users = pgTable(
+  "users",
+  {
+    id: text("id").primaryKey().default(sql`gen_random_uuid()`),
+    email: text("email").notNull().unique(),
+    password: text("password").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  // Enforce one account per email case-insensitively, so a mixed-case legacy
+  // address can't be duplicated by a lowercased signup.
+  (table) => [uniqueIndex("users_email_ci_unique").on(sql`lower(${table.email})`)],
+);
 
 export interface SavedValue {
   id: number;

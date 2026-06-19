@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ValueDef } from "@/lib/values";
 
@@ -9,12 +9,49 @@ export type CardRole = "most" | "least" | null;
 interface ValueCardProps {
   value: ValueDef;
   role: CardRole;
+  /** True when some card in the round is already chosen as most / least. */
+  mostChosen: boolean;
+  leastChosen: boolean;
+  customized?: boolean;
   disabled?: boolean;
   onTap: () => void;
   onAssign: (role: Exclude<CardRole, null>) => void;
+  onEdit: () => void;
 }
 
-export function ValueCard({ value, role, disabled, onTap, onAssign }: ValueCardProps) {
+type ChipStyle = "solid" | "soft" | "muted";
+
+const chipClasses: Record<"most" | "least", Record<ChipStyle, string>> = {
+  most: {
+    solid: "border-most bg-most text-white",
+    soft: "border-most-soft bg-most-soft text-most-foreground hover:border-most",
+    muted: "border-border bg-transparent text-muted-foreground hover:border-most/50",
+  },
+  least: {
+    solid: "border-least bg-least text-white",
+    soft: "border-least-soft bg-least-soft text-least-foreground hover:border-least",
+    muted: "border-border bg-transparent text-muted-foreground hover:border-least/50",
+  },
+};
+
+export function ValueCard({
+  value,
+  role,
+  mostChosen,
+  leastChosen,
+  customized,
+  disabled,
+  onTap,
+  onAssign,
+  onEdit,
+}: ValueCardProps) {
+  // Once one dimension is chosen, that dimension's buttons fade to neutral on
+  // the other cards, so only the colour you still need to pick stays vivid.
+  const mostStyle: ChipStyle =
+    role === "most" ? "solid" : role === "least" || mostChosen ? "muted" : "soft";
+  const leastStyle: ChipStyle =
+    role === "least" ? "solid" : role === "most" || leastChosen ? "muted" : "soft";
+
   return (
     <div
       role="button"
@@ -33,7 +70,7 @@ export function ValueCard({ value, role, disabled, onTap, onAssign }: ValueCardP
         "hover:-translate-y-0.5 hover:shadow-md",
         role === "most" && "border-most bg-most-soft ring-1 ring-most",
         role === "least" && "border-least bg-least-soft ring-1 ring-least",
-        disabled && "pointer-events-none opacity-60",
+        disabled && "opacity-60",
       )}
       data-testid="value-card"
       data-value-id={value.id}
@@ -56,12 +93,7 @@ export function ValueCard({ value, role, disabled, onTap, onAssign }: ValueCardP
       </div>
       <p className="text-sm leading-snug text-muted-foreground">{value.description}</p>
 
-      <div
-        className={cn(
-          "mt-1 flex gap-2 transition-opacity",
-          role === null ? "opacity-100 sm:opacity-0 sm:group-hover:opacity-100" : "opacity-100",
-        )}
-      >
+      <div className="mt-1 flex items-center gap-2">
         <button
           type="button"
           disabled={disabled}
@@ -71,9 +103,7 @@ export function ValueCard({ value, role, disabled, onTap, onAssign }: ValueCardP
           }}
           className={cn(
             "rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",
-            role === "most"
-              ? "border-most bg-most text-white"
-              : "border-border text-muted-foreground hover:border-most hover:text-most-foreground",
+            chipClasses.most[mostStyle],
           )}
           data-testid="assign-most"
         >
@@ -88,13 +118,28 @@ export function ValueCard({ value, role, disabled, onTap, onAssign }: ValueCardP
           }}
           className={cn(
             "rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",
-            role === "least"
-              ? "border-least bg-least text-white"
-              : "border-border text-muted-foreground hover:border-least hover:text-least-foreground",
+            chipClasses.least[leastStyle],
           )}
           data-testid="assign-least"
         >
           Least important
+        </button>
+        <button
+          type="button"
+          aria-label={`Edit ${value.name}`}
+          title="Edit this value or its definition"
+          disabled={disabled}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+          className={cn(
+            "ml-auto rounded-md p-1.5 transition-colors hover:bg-muted",
+            customized ? "text-primary" : "text-muted-foreground",
+          )}
+          data-testid="edit-value"
+        >
+          <Pencil className="size-4" />
         </button>
       </div>
     </div>
