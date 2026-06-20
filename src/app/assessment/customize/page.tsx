@@ -39,7 +39,7 @@ export default async function CustomizePage() {
             return (
               <fieldset key={id} className="rounded-xl border bg-card p-5 shadow-xs">
                 <legend className="font-display px-2 text-sm text-muted-foreground">
-                  #{i + 1}
+                  {i + 1}
                 </legend>
                 <div className="space-y-3">
                   <div className="space-y-1.5">

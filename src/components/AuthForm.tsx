@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { PasswordInput } from "@/components/PasswordInput";
+import { PasswordStrength } from "@/components/PasswordStrength";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +17,7 @@ interface AuthFormProps {
 
 export function AuthForm({ mode, action, next }: AuthFormProps) {
   const [state, formAction, pending] = useActionState(action, { error: null });
+  const [password, setPassword] = useState("");
 
   return (
     <form action={formAction} className="space-y-5">
@@ -31,16 +34,28 @@ export function AuthForm({ mode, action, next }: AuthFormProps) {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">Password</Label>
+          {mode === "login" ? (
+            <Link
+              href="/forgot-password"
+              className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              Forgot password?
+            </Link>
+          ) : null}
+        </div>
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete={mode === "login" ? "current-password" : "new-password"}
           required
           minLength={8}
           placeholder={mode === "signup" ? "At least 8 characters" : undefined}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
+        {mode === "signup" ? <PasswordStrength password={password} /> : null}
       </div>
       {state.error ? (
         <p role="alert" className="text-sm text-destructive">

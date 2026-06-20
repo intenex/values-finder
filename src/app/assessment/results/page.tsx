@@ -59,10 +59,7 @@ export default async function ResultsPage() {
           })}
         </ol>
 
-        <div className="mt-10 flex justify-end gap-3">
-          <Button variant="outline" asChild>
-            <Link href="/assessment">Review my answers</Link>
-          </Button>
+        <div className="mt-10 flex justify-end">
           <Button asChild>
             <Link href="/assessment/customize">Continue</Link>
           </Button>

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import {
+  latestResetToken,
   login,
   seedCompletedSession,
   seedUser,
@@ -33,14 +34,14 @@ test("login with no completed results opens the exercise", async ({ page }) => {
   await expect(page).toHaveURL(/\/assessment/);
 });
 
-test("login is case-insensitive for legacy mixed-case emails", async ({ page }) => {
-  // The old app stored emails exactly as typed; a lowercased lookup must still
-  // find them (this is the bug that locked Janusz out of his account).
-  const lower = uniqueEmail("caseci");
-  const stored = lower.replace("caseci", "CaseCI").replace("@example.com", "@Example.com");
-  await seedUser(stored);
+test("login is case-insensitive in the typed email", async ({ page }) => {
+  // Emails are stored lowercase (the migration lowercased legacy mixed-case
+  // rows — the bug that locked Janusz out). Signing in must work regardless of
+  // how the user types the casing, because Better Auth lowercases the input.
+  const email = uniqueEmail("caseci");
+  await seedUser(email);
 
-  await login(page, lower);
+  await login(page, email.toUpperCase());
   await expect(page).toHaveURL(/\/assessment/);
 });
 
@@ -93,4 +94,63 @@ test("duplicate signup is rejected", async ({ page }) => {
   await page.fill("#password", TEST_PASSWORD);
   await page.click("button[type=submit]");
   await expect(page.locator("p[role=alert]")).toContainText("already exists");
+});
+
+test("show/hide toggle reveals the password", async ({ page }) => {
+  await page.goto("/login");
+  const input = page.locator("#password");
+  await input.fill("hunter2pass");
+  await expect(input).toHaveAttribute("type", "password");
+  await page.getByRole("button", { name: "Show password" }).click();
+  await expect(input).toHaveAttribute("type", "text");
+  await page.getByRole("button", { name: "Hide password" }).click();
+  await expect(input).toHaveAttribute("type", "password");
+});
+
+test("password strength meter shows on signup, not on login", async ({ page }) => {
+  await page.goto("/login");
+  await expect(page.getByTestId("password-strength")).toHaveCount(0);
+
+  await page.goto("/signup");
+  await expect(page.getByTestId("password-strength")).toHaveCount(0); // hidden until typing
+  await page.fill("#password", "abc");
+  await expect(page.getByTestId("password-strength")).toBeVisible();
+});
+
+test("forgot-password shows a neutral confirmation", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByRole("link", { name: "Forgot password?" }).click();
+  await page.waitForURL(/\/forgot-password/);
+  await page.fill("#email", uniqueEmail("forgot"));
+  await page.click("button[type=submit]");
+  await expect(page.getByRole("status")).toContainText("If an account exists");
+});
+
+test("a user can reset their password and sign in with the new one", async ({ page }) => {
+  const email = uniqueEmail("reset");
+  const userId = await seedUser(email);
+
+  // Request the reset through the real form, then read the issued token.
+  await page.goto("/forgot-password");
+  await page.fill("#email", email);
+  await page.click("button[type=submit]");
+  await expect(page.getByRole("status")).toBeVisible();
+
+  const token = await latestResetToken(userId);
+  await page.goto(`/reset-password?token=${token}`);
+  await page.fill("#password", "BrandNewPass123!");
+  await page.click("button[type=submit]");
+  await page.waitForURL(/\/login\?reset=1/);
+  await expect(page.getByRole("status")).toContainText("password has been reset");
+
+  // Old password no longer works; the new one does.
+  await page.fill("#email", email);
+  await page.fill("#password", TEST_PASSWORD);
+  await page.click("button[type=submit]");
+  await expect(page.locator("p[role=alert]")).toContainText("Invalid email or password");
+
+  await page.fill("#email", email);
+  await page.fill("#password", "BrandNewPass123!");
+  await page.click("button[type=submit]");
+  await expect(page).toHaveURL(/\/assessment/);
 });

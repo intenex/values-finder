@@ -34,7 +34,7 @@ export default async function HomePage() {
             )}
           </div>
           <p className="mt-6 text-sm text-muted-foreground">
-            About 15–20 minutes · free
+            Takes about 15–20 minutes · No cost
           </p>
         </div>
       </main>

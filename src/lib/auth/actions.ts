@@ -1,18 +1,18 @@
 "use server";
 
+import { APIError } from "better-auth/api";
 import { and, eq, isNotNull, sql } from "drizzle-orm";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getActiveAssessment } from "@/lib/assessment";
+import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users, userValuesSessions } from "@/lib/db/schema";
-import { hashPassword, verifyPassword } from "./password";
-import { createSession, destroySession, getCurrentUser } from "./session";
 
-// Match emails case-insensitively. Legacy accounts created by the old app were
-// stored with the exact casing the user typed (e.g. "janusz@DeepMindfulness.io"),
-// so a lowercased lookup would miss them — which previously let people get
-// "invalid password" on a real account and then create an accidental duplicate.
+// Match emails case-insensitively. Although Better Auth now stores and looks up
+// emails in lowercase (and the data migration lowercased all legacy rows), this
+// pre-check still guards signup against a mixed-case duplicate before the insert.
 const emailMatches = (email: string) => sql`lower(${users.email}) = ${email}`;
 
 const credentialsSchema = z.object({
@@ -20,7 +20,20 @@ const credentialsSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
+const emailSchema = z.object({
+  email: z.string().trim().toLowerCase().email("Enter a valid email address"),
+});
+
 export interface AuthFormState {
+  error: string | null;
+}
+
+export interface ResetRequestState {
+  error: string | null;
+  sent: boolean;
+}
+
+export interface ResetPasswordState {
   error: string | null;
 }
 
@@ -66,13 +79,20 @@ export async function login(
   }
   const { email, password } = parsed.data;
 
-  const [user] = await db.select().from(users).where(emailMatches(email)).limit(1);
-  if (!user || !(await verifyPassword(password, user.password))) {
+  let userId: string;
+  try {
+    const result = await auth.api.signInEmail({
+      body: { email, password },
+      headers: await headers(),
+    });
+    userId = result.user.id;
+  } catch {
+    // Better Auth throws on bad credentials / unknown email; collapse to one
+    // message so we don't reveal which accounts exist.
     return { error: "Invalid email or password" };
   }
 
-  await createSession(user.id);
-  redirect(safeNext(formData.get("next")) ?? (await postLoginDestination(user.id)));
+  redirect(safeNext(formData.get("next")) ?? (await postLoginDestination(userId)));
 }
 
 export async function signup(
@@ -97,31 +117,74 @@ export async function signup(
     return { error: "An account with this email already exists" };
   }
 
-  let user: { id: string } | undefined;
   try {
-    const inserted = await db
-      .insert(users)
-      .values({ email, password: await hashPassword(password) })
-      .returning({ id: users.id });
-    user = inserted[0];
-  } catch {
-    // Case-insensitive unique index raced with a concurrent signup.
-    return { error: "An account with this email already exists" };
-  }
-  if (!user) {
+    // Better Auth requires a name; the app never displays it, so derive a
+    // placeholder from the email local-part. The verification email is sent
+    // automatically (sendOnSignUp) and the user is signed in immediately.
+    await auth.api.signUpEmail({
+      body: { email, password, name: email.split("@")[0] },
+      headers: await headers(),
+    });
+  } catch (err) {
+    if (err instanceof APIError) {
+      // Lost the race against the case-insensitive unique index.
+      return { error: "An account with this email already exists" };
+    }
     return { error: "Something went wrong creating your account" };
   }
 
-  await createSession(user.id);
   redirect(safeNext(formData.get("next")) ?? "/assessment/intro");
 }
 
 export async function logout(): Promise<void> {
-  await destroySession();
+  await auth.api.signOut({ headers: await headers() });
   redirect("/");
 }
 
-export async function getSessionUser() {
-  const user = await getCurrentUser();
-  return user ? { id: user.id, email: user.email } : null;
+export async function requestPasswordReset(
+  _prev: ResetRequestState,
+  formData: FormData,
+): Promise<ResetRequestState> {
+  const parsed = emailSchema.safeParse({ email: formData.get("email") });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message, sent: false };
+  }
+
+  try {
+    await auth.api.requestPasswordReset({
+      body: { email: parsed.data.email, redirectTo: "/reset-password" },
+    });
+  } catch {
+    // Swallow errors so the response is identical whether or not the account
+    // exists — no user enumeration.
+  }
+  return { error: null, sent: true };
+}
+
+export async function resetPassword(
+  _prev: ResetPasswordState,
+  formData: FormData,
+): Promise<ResetPasswordState> {
+  const token = formData.get("token");
+  const password = formData.get("password");
+  if (typeof token !== "string" || token.length === 0) {
+    return { error: "This reset link is invalid or has expired. Request a new one." };
+  }
+  const parsedPassword = z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .safeParse(password);
+  if (!parsedPassword.success) {
+    return { error: parsedPassword.error.issues[0].message };
+  }
+
+  try {
+    await auth.api.resetPassword({
+      body: { token, newPassword: parsedPassword.data },
+    });
+  } catch {
+    return { error: "This reset link is invalid or has expired. Request a new one." };
+  }
+
+  redirect("/login?reset=1");
 }

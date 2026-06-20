@@ -12,10 +12,10 @@ export const metadata: Metadata = { title: "Your profile" };
 export default async function ProfilePage({
   searchParams,
 }: {
-  searchParams: Promise<{ celebrate?: string }>;
+  searchParams: Promise<{ celebrate?: string; unchanged?: string }>;
 }) {
   const user = await requireUser("/profile");
-  const { celebrate } = await searchParams;
+  const { celebrate, unchanged } = await searchParams;
 
   // Only completed sessions: legacy in-progress rows from the old app (and
   // anything half-finished) are intentionally hidden.
@@ -44,6 +44,7 @@ export default async function ProfilePage({
           }))}
           hasActiveAssessment={Boolean(active && active.choices.length > 0)}
           celebrate={celebrate === "1"}
+          unchanged={unchanged === "1"}
         />
       </main>
     </>

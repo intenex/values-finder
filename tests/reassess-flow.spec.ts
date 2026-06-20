@@ -27,6 +27,26 @@ test("returning user reassesses values into a new snapshot", async ({ page }) =>
   await expect(page.getByTestId("session-tabs").locator("button")).toHaveCount(2);
 });
 
+test("reassessing with no changes does not create a duplicate snapshot", async ({
+  page,
+}) => {
+  const email = uniqueEmail("noop");
+  const userId = await seedUser(email);
+  await seedCompletedSession(userId);
+
+  await login(page, email);
+  await page.getByTestId("reassess-link").click();
+  await page.waitForURL(/\/profile\/reassess/);
+
+  // Save without editing anything.
+  await page.getByTestId("save-reassessment").click();
+  await page.waitForURL(/\/profile(\?|$)/);
+
+  // Still a single snapshot — the no-op did not append history (tabs only
+  // render when there is more than one completed session).
+  await expect(page.getByTestId("session-tabs")).toHaveCount(0);
+});
+
 test("retake requires confirmation and starts a fresh exercise", async ({ page }) => {
   const email = uniqueEmail("retake");
   const userId = await seedUser(email);

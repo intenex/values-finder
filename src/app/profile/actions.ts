@@ -21,10 +21,27 @@ export async function getLatestCompletedSession(userId: string) {
   return row ?? null;
 }
 
+/** True when two snapshots carry identical user-editable content. */
+function sameSnapshot(a: SavedValue[], b: SavedValue[]): boolean {
+  if (a.length !== b.length) return false;
+  const byId = new Map(a.map((v) => [v.id, v]));
+  return b.every((v) => {
+    const prev = byId.get(v.id);
+    return (
+      prev !== undefined &&
+      prev.name === v.name &&
+      prev.description === v.description &&
+      prev.rating === v.rating
+    );
+  });
+}
+
 /**
  * Reassess: take the latest completed session's ten values, apply edited
  * wording and fresh ratings, and save the result as a NEW session — history
- * is append-only, matching the old app's behavior.
+ * is append-only, matching the old app's behavior. A snapshot is only written
+ * when something actually changed, which also makes repeated/duplicate submits
+ * idempotent (the second submit compares equal to the snapshot just written).
  */
 export async function saveReassessment(formData: FormData): Promise<void> {
   const user = await getCurrentUser();
@@ -58,6 +75,18 @@ export async function saveReassessment(formData: FormData): Promise<void> {
       isCustom: v.isCustom || name.trim() !== v.name || description.trim() !== v.description,
     };
   });
+
+  // No edits vs. the latest snapshot → don't create a redundant history entry.
+  if (sameSnapshot(latest.topValues, topValues)) {
+    redirect("/profile?unchanged=1");
+  }
+
+  // Guard the double-submit race: if a concurrent save already wrote this exact
+  // snapshot between our read and now, treat this submit as a no-op too.
+  const current = await getLatestCompletedSession(user.id);
+  if (current && sameSnapshot(current.topValues, topValues)) {
+    redirect("/profile?unchanged=1");
+  }
 
   await db.insert(userValuesSessions).values({
     userId: user.id,

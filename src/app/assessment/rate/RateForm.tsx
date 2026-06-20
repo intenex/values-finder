@@ -39,7 +39,7 @@ export function RateForm({ items, action, submitLabel = "Save my values" }: Rate
         <div key={v.id} className="rounded-xl border bg-card p-5 shadow-xs">
           <div className="mb-1 flex items-baseline justify-between gap-4">
             <h2 className="font-display text-base font-medium tracking-wide">
-              <span className="mr-2 text-muted-foreground">{i + 1}.</span>
+              <span className="mr-2 text-muted-foreground">{i + 1}</span>
               {v.name}
             </h2>
             <span

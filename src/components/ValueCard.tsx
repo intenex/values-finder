@@ -66,8 +66,10 @@ export function ValueCard({
         }
       }}
       className={cn(
-        "group relative flex cursor-pointer flex-col gap-1.5 rounded-xl border bg-card p-4 text-left shadow-xs transition-all duration-200 select-none",
-        "hover:-translate-y-0.5 hover:shadow-md",
+        // Transition only non-layout properties — a hover transform would shift
+        // the card under the cursor and cause flicker/jitter near its edges.
+        "group relative flex cursor-pointer flex-col gap-1.5 rounded-xl border bg-card p-4 text-left shadow-xs transition-[box-shadow,border-color,background-color] duration-200 select-none",
+        "hover:border-primary/40 hover:shadow-md",
         role === "most" && "border-most bg-most-soft ring-1 ring-most",
         role === "least" && "border-least bg-least-soft ring-1 ring-least",
         disabled && "opacity-60",

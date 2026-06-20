@@ -104,6 +104,12 @@ export function AssessmentRunner({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor, answeredCount]);
 
+  // Each new round should start at the top — long rounds otherwise open
+  // scrolled mid-page. Instant (not smooth) so it doesn't animate mid-advance.
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [cursor]);
+
   const syncFromServer = useCallback(
     (nextSets: AssessmentSets, nextChoices: AssessmentChoice[]) => {
       const prevCount = choices.length;

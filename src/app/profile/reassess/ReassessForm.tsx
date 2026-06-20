@@ -1,6 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,27 +25,48 @@ interface ReassessFormProps {
 }
 
 export function ReassessForm({ values, action }: ReassessFormProps) {
+  const router = useRouter();
   const [ratings, setRatings] = useState<Record<number, number>>(
     Object.fromEntries(values.map((v) => [v.id, v.rating])),
   );
   const [submitting, setSubmitting] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
+
+  // Warn before a hard navigation (refresh / tab close) drops unsaved edits.
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+
+  const handleCancel = () => {
+    if (dirty) setConfirmLeave(true);
+    else router.push("/profile");
+  };
 
   return (
     <form
       action={async (formData) => {
         setSubmitting(true);
+        setDirty(false); // saving is intentional — don't warn on the redirect
         try {
           await action(formData);
         } finally {
           setSubmitting(false);
         }
       }}
+      onChange={() => setDirty(true)}
       className="space-y-6"
     >
       {values.map((v, i) => (
         <fieldset key={v.id} className="rounded-xl border bg-card p-5 shadow-xs">
           <legend className="font-display px-2 text-sm text-muted-foreground">
-            #{i + 1}
+            {i + 1}
           </legend>
           <div className="space-y-4">
             <div className="space-y-1.5">
@@ -71,7 +103,10 @@ export function ReassessForm({ values, action }: ReassessFormProps) {
                 max={10}
                 step={1}
                 value={[ratings[v.id]]}
-                onValueChange={([val]) => setRatings((r) => ({ ...r, [v.id]: val }))}
+                onValueChange={([val]) => {
+                  setRatings((r) => ({ ...r, [v.id]: val }));
+                  setDirty(true);
+                }}
                 aria-label={`How fully are you living ${v.name}?`}
               />
             </div>
@@ -79,11 +114,37 @@ export function ReassessForm({ values, action }: ReassessFormProps) {
         </fieldset>
       ))}
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="ghost" onClick={handleCancel} disabled={submitting}>
+          Cancel
+        </Button>
         <Button type="submit" disabled={submitting} data-testid="save-reassessment">
           {submitting ? "Saving…" : "Save new snapshot"}
         </Button>
       </div>
+
+      <AlertDialog open={confirmLeave} onOpenChange={setConfirmLeave}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Discard your changes?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have unsaved edits. Leaving now will discard them — your earlier
+              snapshots stay in your history.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep editing</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setDirty(false);
+                router.push("/profile");
+              }}
+            >
+              Discard
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </form>
   );
 }

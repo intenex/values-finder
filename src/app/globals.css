@@ -83,4 +83,14 @@
   .font-display {
     font-family: var(--font-display);
   }
+  /* Tailwind v4 drops the default button cursor; restore the affordance for
+     every clickable control (raw buttons, role=button), while disabled
+     controls read as not-allowed. shadcn Button sets cursor-pointer itself. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
 }

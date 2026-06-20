@@ -3,7 +3,7 @@
 import { toPng } from "html-to-image";
 import { Download, PencilLine, RotateCcw } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { restartAssessment } from "@/app/assessment/actions";
 import {
@@ -30,6 +30,7 @@ interface ProfileViewProps {
   sessions: SessionSummary[];
   hasActiveAssessment: boolean;
   celebrate: boolean;
+  unchanged: boolean;
 }
 
 function formatDate(iso: string): string {
@@ -40,17 +41,46 @@ function formatDate(iso: string): string {
   });
 }
 
-export function ProfileView({ sessions, hasActiveAssessment, celebrate }: ProfileViewProps) {
+function formatDateTime(iso: string): string {
+  return new Date(iso).toLocaleString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+export function ProfileView({
+  sessions,
+  hasActiveAssessment,
+  celebrate,
+  unchanged,
+}: ProfileViewProps) {
   const [selectedId, setSelectedId] = useState(sessions[0]?.id ?? null);
   const [exporting, setExporting] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
   const selected = sessions.find((s) => s.id === selectedId) ?? null;
+
+  // When two snapshots fall on the same calendar day, show the time so they can
+  // be told apart; otherwise the date alone keeps the history uncluttered.
+  const hasSameDaySnapshots = useMemo(() => {
+    const days = sessions.map((s) => formatDate(s.createdAt));
+    return new Set(days).size !== days.length;
+  }, [sessions]);
+  const label = hasSameDaySnapshots ? formatDateTime : formatDate;
 
   useEffect(() => {
     if (celebrate) {
       toast("Your values are saved. Come back anytime to reflect or reassess.");
     }
   }, [celebrate]);
+
+  useEffect(() => {
+    if (unchanged) {
+      toast("No changes to save — your latest snapshot is unchanged.");
+    }
+  }, [unchanged]);
 
   const exportImage = async () => {
     if (!exportRef.current || !selected) return;
@@ -133,6 +163,10 @@ export function ProfileView({ sessions, hasActiveAssessment, celebrate }: Profil
           </AlertDialog>
         </div>
       </div>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Reassess keeps your ten values and re-rates them as a new snapshot;
+        Retake starts the whole exercise over.
+      </p>
 
       {hasActiveAssessment ? (
         <div className="mt-6 flex items-center justify-between rounded-xl border border-accent bg-accent/50 p-4 text-sm">
@@ -156,7 +190,7 @@ export function ProfileView({ sessions, hasActiveAssessment, celebrate }: Profil
                   : "text-muted-foreground hover:border-primary/50"
               }`}
             >
-              {formatDate(s.createdAt)}
+              {label(s.createdAt)}
             </button>
           ))}
         </div>
@@ -166,7 +200,7 @@ export function ProfileView({ sessions, hasActiveAssessment, celebrate }: Profil
         <>
           <div ref={exportRef} className="mt-6 rounded-2xl border bg-card p-6 sm:p-8">
             <p className="text-xs tracking-wide text-muted-foreground uppercase">
-              My ten values · {formatDate(selected.createdAt)}
+              My ten values · {label(selected.createdAt)}
             </p>
             <ol className="mt-5 space-y-4" data-testid="session-values">
               {selected.topValues.map((v, i) => (
@@ -198,7 +232,7 @@ export function ProfileView({ sessions, hasActiveAssessment, celebrate }: Profil
           <div className="mt-4 flex justify-end">
             <Button variant="outline" size="sm" onClick={exportImage} disabled={exporting}>
               <Download className="size-4" />
-              {exporting ? "Exporting…" : "Export Results"}
+              {exporting ? "Exporting…" : "Export results"}
             </Button>
           </div>
         </>

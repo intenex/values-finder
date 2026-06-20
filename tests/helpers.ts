@@ -15,15 +15,23 @@ export function uniqueEmail(prefix: string): string {
   return `${prefix}-${randomUUID().slice(0, 8)}@example.com`;
 }
 
-/** Insert a user directly (bcrypt cost 10, like legacy accounts). */
+/**
+ * Insert a user the way the Better Auth migration leaves them: a `users` row
+ * plus a matching `credential` account holding a bcrypt cost-10 hash (like a
+ * legacy account that was back-filled). This is what Better Auth reads on login.
+ */
 export async function seedUser(email: string): Promise<string> {
   const id = randomUUID();
   const hash = await bcrypt.hash(TEST_PASSWORD, 10);
-  await pool.query(`INSERT INTO users (id, email, password) VALUES ($1, $2, $3)`, [
-    id,
-    email,
-    hash,
-  ]);
+  await pool.query(
+    `INSERT INTO users (id, email, password, email_verified) VALUES ($1, $2, $3, true)`,
+    [id, email, hash],
+  );
+  await pool.query(
+    `INSERT INTO account (id, account_id, provider_id, user_id, password, created_at, updated_at)
+     VALUES ($1, $2, 'credential', $3, $4, now(), now())`,
+    [randomUUID(), id, id, hash],
+  );
   return id;
 }
 
@@ -49,6 +57,18 @@ export async function seedCompletedSession(userId: string): Promise<void> {
       ),
     ],
   );
+}
+
+/** The most recent password-reset token Better Auth issued for a user. */
+export async function latestResetToken(userId: string): Promise<string> {
+  const { rows } = await pool.query(
+    `SELECT identifier FROM verification
+     WHERE value = $1 AND identifier LIKE 'reset-password:%'
+     ORDER BY created_at DESC LIMIT 1`,
+    [userId],
+  );
+  if (!rows[0]) throw new Error("no reset token found for user");
+  return String(rows[0].identifier).replace("reset-password:", "");
 }
 
 export async function login(page: Page, email: string): Promise<void> {

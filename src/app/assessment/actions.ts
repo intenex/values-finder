@@ -8,7 +8,7 @@ import {
   getOwnedAssessment,
   persistProgress,
 } from "@/lib/assessment";
-import { getCurrentUser, renewSessionIfNeeded } from "@/lib/auth/session";
+import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { assessments, type AssessmentChoice, type AssessmentSets } from "@/lib/db/schema";
 import { applyEdit, applySubmit } from "@/lib/engine/edit";
@@ -36,7 +36,7 @@ async function recordChoice(
 ): Promise<ChoiceResult> {
   const user = await getCurrentUser();
   if (!user) return { ok: false, error: "Signed out" };
-  await renewSessionIfNeeded();
+  // Better Auth manages sliding session renewal itself (via nextCookies()).
 
   const parsed = choiceInput.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Invalid input" };
