@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SiteNav } from "@/components/SiteNav";
 import { Button } from "@/components/ui/button";
+import { getValueText } from "@/i18n/values-server";
 import { getActiveAssessment } from "@/lib/assessment";
 import { requireUser } from "@/lib/auth/session";
 import { replay } from "@/lib/engine/replay";
-import { getValue } from "@/lib/values";
 
-export const metadata: Metadata = { title: "Your top 10 values" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return { title: t("top10") };
+}
 
 export default async function ResultsPage() {
   const user = await requireUser("/assessment/results");
@@ -20,24 +24,25 @@ export default async function ResultsPage() {
   const state = replay(assessment.sets, assessment.choices);
   if (state.phase !== "customize") redirect("/assessment");
 
+  const t = await getTranslations("results");
+  const valueText = await getValueText();
+
   return (
     <>
       <SiteNav email={user.email} />
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-12 sm:px-6">
         <p className="text-sm font-medium tracking-wide text-primary uppercase">
-          Your results
+          {t("eyebrow")}
         </p>
-        <h1 className="font-display mt-2 text-4xl tracking-tight">
-          Your ten most important values
-        </h1>
+        <h1 className="font-display mt-2 text-4xl tracking-tight">{t("title")}</h1>
         <p className="mt-3 mb-10 text-muted-foreground">
-          {`Out of ${state.totalRounds} rounds of choices, these are the values that rose to the top. Next you can fine-tune their wording, then reflect on how fully you're living each one.`}
+          {t("body", { total: state.totalRounds })}
         </p>
 
         <ol className="space-y-3" data-testid="top-ten">
           {state.top10.map((id, i) => {
             const custom = assessment.customizations?.[id];
-            const v = getValue(id);
+            const v = valueText(id);
             return (
               <li
                 key={id}
@@ -61,7 +66,7 @@ export default async function ResultsPage() {
 
         <div className="mt-10 flex justify-end">
           <Button asChild>
-            <Link href="/assessment/customize">Continue</Link>
+            <Link href="/assessment/customize">{t("continue")}</Link>
           </Button>
         </div>
       </main>

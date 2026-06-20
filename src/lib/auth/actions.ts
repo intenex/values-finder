@@ -2,6 +2,7 @@
 
 import { APIError } from "better-auth/api";
 import { and, eq, isNotNull, sql } from "drizzle-orm";
+import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -66,6 +67,14 @@ function safeNext(next: unknown): string | null {
     : null;
 }
 
+/** Localized message for the first zod validation issue (email vs password). */
+async function validationError(issue: { path: PropertyKey[] }): Promise<string> {
+  const t = await getTranslations("auth");
+  return issue.path[0] === "password"
+    ? t("errorPasswordMin")
+    : t("errorInvalidEmail");
+}
+
 export async function login(
   _prev: AuthFormState,
   formData: FormData,
@@ -75,7 +84,7 @@ export async function login(
     password: formData.get("password"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message };
+    return { error: await validationError(parsed.error.issues[0]) };
   }
   const { email, password } = parsed.data;
 
@@ -89,7 +98,8 @@ export async function login(
   } catch {
     // Better Auth throws on bad credentials / unknown email; collapse to one
     // message so we don't reveal which accounts exist.
-    return { error: "Invalid email or password" };
+    const t = await getTranslations("auth");
+    return { error: t("errorInvalidCredentials") };
   }
 
   redirect(safeNext(formData.get("next")) ?? (await postLoginDestination(userId)));
@@ -104,9 +114,10 @@ export async function signup(
     password: formData.get("password"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message };
+    return { error: await validationError(parsed.error.issues[0]) };
   }
   const { email, password } = parsed.data;
+  const t = await getTranslations("auth");
 
   const [existing] = await db
     .select({ id: users.id })
@@ -114,7 +125,7 @@ export async function signup(
     .where(emailMatches(email))
     .limit(1);
   if (existing) {
-    return { error: "An account with this email already exists" };
+    return { error: t("errorAccountExists") };
   }
 
   try {
@@ -128,9 +139,9 @@ export async function signup(
   } catch (err) {
     if (err instanceof APIError) {
       // Lost the race against the case-insensitive unique index.
-      return { error: "An account with this email already exists" };
+      return { error: t("errorAccountExists") };
     }
-    return { error: "Something went wrong creating your account" };
+    return { error: t("errorSomethingWrong") };
   }
 
   redirect(safeNext(formData.get("next")) ?? "/assessment/intro");
@@ -147,7 +158,7 @@ export async function requestPasswordReset(
 ): Promise<ResetRequestState> {
   const parsed = emailSchema.safeParse({ email: formData.get("email") });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message, sent: false };
+    return { error: await validationError(parsed.error.issues[0]), sent: false };
   }
 
   try {
@@ -165,17 +176,15 @@ export async function resetPassword(
   _prev: ResetPasswordState,
   formData: FormData,
 ): Promise<ResetPasswordState> {
+  const t = await getTranslations("auth");
   const token = formData.get("token");
   const password = formData.get("password");
   if (typeof token !== "string" || token.length === 0) {
-    return { error: "This reset link is invalid or has expired. Request a new one." };
+    return { error: t("errorResetExpired") };
   }
-  const parsedPassword = z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .safeParse(password);
+  const parsedPassword = z.string().min(8).safeParse(password);
   if (!parsedPassword.success) {
-    return { error: parsedPassword.error.issues[0].message };
+    return { error: t("errorPasswordMin") };
   }
 
   try {
@@ -183,7 +192,7 @@ export async function resetPassword(
       body: { token, newPassword: parsedPassword.data },
     });
   } catch {
-    return { error: "This reset link is invalid or has expired. Request a new one." };
+    return { error: t("errorResetExpired") };
   }
 
   redirect("/login?reset=1");

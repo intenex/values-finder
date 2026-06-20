@@ -3,6 +3,7 @@
 import { and, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { getValueText } from "@/i18n/values-server";
 import { getActiveAssessment } from "@/lib/assessment";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
@@ -27,12 +28,15 @@ export async function saveCustomizations(formData: FormData): Promise<void> {
   const state = replay(assessment.sets, assessment.choices);
   if (state.phase !== "customize") redirect("/assessment");
 
+  // Compare against the localized base the user actually saw, so leaving a
+  // value untouched in any language is never mistaken for a customization.
+  const valueText = await getValueText();
   const draft: Record<number, { name: string; description: string }> = {};
   for (const id of state.top10) {
     const name = formData.get(`name-${id}`);
     const description = formData.get(`description-${id}`);
     if (typeof name === "string" && typeof description === "string") {
-      const base = getValue(id);
+      const base = valueText(id);
       if (name.trim() !== base.name || description.trim() !== base.description) {
         draft[id] = { name: name.trim(), description: description.trim() };
       }

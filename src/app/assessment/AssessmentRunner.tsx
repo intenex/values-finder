@@ -1,10 +1,12 @@
 "use client";
 
 import { ArrowLeft, ArrowRight, Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { customizeValue, editChoice, submitChoice, type Customizations } from "./actions";
+import { useValueText } from "@/i18n/useValueText";
 import { ValueCard, type CardRole } from "@/components/ValueCard";
 import {
   AlertDialog,
@@ -29,7 +31,6 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import type { AssessmentChoice, AssessmentSets } from "@/lib/db/schema";
-import { getValue } from "@/lib/values";
 
 interface AssessmentRunnerProps {
   assessmentId: string;
@@ -44,10 +45,10 @@ interface Selection {
 }
 
 const MILESTONES = [
-  { at: 0.25, message: "A quarter of the way — you're building a clear picture." },
-  { at: 0.5, message: "Halfway there. Take a breath — you're doing well." },
-  { at: 0.75, message: "Three quarters done. Your top values are taking shape." },
-];
+  { at: 0.25, key: "milestone25" },
+  { at: 0.5, key: "milestone50" },
+  { at: 0.75, key: "milestone75" },
+] as const;
 
 export function AssessmentRunner({
   assessmentId,
@@ -56,6 +57,8 @@ export function AssessmentRunner({
   initialCustomizations,
 }: AssessmentRunnerProps) {
   const router = useRouter();
+  const t = useTranslations("assessment");
+  const valueText = useValueText();
   const [sets, setSets] = useState(initialSets);
   const [choices, setChoices] = useState(initialChoices);
   const [customizations, setCustomizations] = useState<Customizations>(initialCustomizations);
@@ -81,12 +84,14 @@ export function AssessmentRunner({
 
   const existing = choices[cursor] as AssessmentChoice | undefined;
   const isEditingPast = cursor < answeredCount;
-  const phaseLabel = cursor < screeningRounds ? "Discovering" : "Narrowing";
+  const phaseLabel = cursor < screeningRounds ? t("phaseDiscovering") : t("phaseNarrowing");
 
   // Resolve a value's display name/description, honouring any edit the user made.
+  // Non-customized text is localized to the active language; a user's own edit
+  // is shown verbatim in whatever language they typed.
   const display = useCallback(
     (id: number) => {
-      const base = getValue(id);
+      const base = valueText(id);
       const custom = customizations[id];
       return {
         id,
@@ -95,7 +100,7 @@ export function AssessmentRunner({
         customized: Boolean(custom),
       };
     },
-    [customizations],
+    [customizations, valueText],
   );
 
   // Reset the selection whenever the viewed round changes.
@@ -117,20 +122,20 @@ export function AssessmentRunner({
       setChoices(nextChoices);
 
       const total = nextSets.screening.length + (nextSets.refinement?.length ?? 15);
-      for (const { at, message } of MILESTONES) {
+      for (const { at, key } of MILESTONES) {
         const threshold = Math.ceil(total * at);
         if (prevCount < threshold && nextChoices.length >= threshold) {
-          toast(message);
+          toast(t(key));
         }
       }
       if (
         prevCount < nextSets.screening.length &&
         nextChoices.length === nextSets.screening.length
       ) {
-        toast("Discovery complete — these final rounds rank your top 25 values.");
+        toast(t("discoveryComplete"));
       }
     },
-    [choices.length],
+    [choices.length, t],
   );
 
   const submitNew = useCallback(
@@ -139,7 +144,7 @@ export function AssessmentRunner({
       const res = await submitChoice({ assessmentId, round: cursor, m, l });
       setSaving(false);
       if (!res.ok) {
-        toast.error(res.error ?? "Something went wrong — please try again.");
+        toast.error(res.error ?? t("somethingWrong"));
         if (res.sets && res.choices) {
           syncFromServer(res.sets, res.choices);
           setCursor(res.choices.length);
@@ -154,7 +159,7 @@ export function AssessmentRunner({
         setCursor(res.choices!.length);
       }
     },
-    [assessmentId, cursor, router, syncFromServer],
+    [assessmentId, cursor, router, syncFromServer, t],
   );
 
   // Auto-advance shortly after both picks are made on a new round.
@@ -175,14 +180,14 @@ export function AssessmentRunner({
     const res = await editChoice({ assessmentId, round: cursor, m: sel.m, l: sel.l });
     setSaving(false);
     if (!res.ok) {
-      toast.error(res.error ?? "Something went wrong — please try again.");
+      toast.error(res.error ?? t("somethingWrong"));
       return;
     }
     syncFromServer(res.sets!, res.choices!);
     if (res.refinementInvalidated) {
       setInvalidationOpen(true);
     } else {
-      toast("Answer updated.");
+      toast(t("answerUpdated"));
     }
   };
 
@@ -204,17 +209,17 @@ export function AssessmentRunner({
     });
     setSavingEdit(false);
     if (!res.ok) {
-      toast.error(res.error ?? "Could not save — please try again.");
+      toast.error(res.error ?? t("couldNotSave"));
       return;
     }
     setCustomizations(res.customizations ?? {});
     setEditId(null);
-    toast("Value updated.");
+    toast(t("valueUpdated"));
   };
 
   const resetEditorToOriginal = () => {
     if (editId === null) return;
-    const base = getValue(editId);
+    const base = valueText(editId);
     setDraftName(base.name);
     setDraftDesc(base.description);
   };
@@ -254,11 +259,11 @@ export function AssessmentRunner({
       <header className="sticky top-0 z-10 -mx-4 bg-background/90 px-4 pt-6 pb-4 backdrop-blur sm:-mx-6 sm:px-6">
         <div className="mb-2 flex items-baseline justify-between text-sm">
           <span className="font-medium">
-            Round {Math.min(cursor + 1, totalRounds)} of {totalRounds}
+            {t("roundOf", { current: Math.min(cursor + 1, totalRounds), total: totalRounds })}
             <span className="ml-2 text-muted-foreground">· {phaseLabel}</span>
           </span>
           <span className="text-muted-foreground" data-testid="answered-count">
-            {answeredCount} answered
+            {t("answered", { count: answeredCount })}
           </span>
         </div>
         <Progress value={(answeredCount / totalRounds) * 100} className="h-1.5" />
@@ -266,20 +271,22 @@ export function AssessmentRunner({
 
       <div className="mt-6 mb-5 text-center">
         {isEditingPast ? (
-          <p className="text-base text-muted-foreground">
-            You answered this round before — change it if it no longer feels right.
-          </p>
+          <p className="text-base text-muted-foreground">{t("editingPast")}</p>
         ) : (
           <>
             <p className="text-base text-foreground">
-              Choose the value that matters{" "}
-              <strong className="font-semibold text-most-foreground">Most</strong> and{" "}
-              <strong className="font-semibold text-least-foreground">Least</strong> to
-              you.
+              {t.rich("prompt", {
+                most: (chunks) => (
+                  <strong className="font-semibold text-most-foreground">{chunks}</strong>
+                ),
+                least: (chunks) => (
+                  <strong className="font-semibold text-least-foreground">{chunks}</strong>
+                ),
+              })}
             </p>
             <p className="mt-1.5 inline-flex items-center gap-1 text-sm text-muted-foreground">
-              You can edit any value or definition anytime — just tap the
-              <Pencil className="size-3.5" aria-hidden /> icon.
+              {t("editHintPrefix")}
+              <Pencil className="size-3.5" aria-hidden /> {t("editHintSuffix")}
             </p>
           </>
         )}
@@ -310,12 +317,12 @@ export function AssessmentRunner({
           onClick={() => setCursor((c) => c - 1)}
           data-testid="back-button"
         >
-          <ArrowLeft className="size-4" /> Back
+          <ArrowLeft className="size-4" /> {t("back")}
         </Button>
 
         {editDirty ? (
           <Button onClick={saveEdit} disabled={saving || sel.m === null || sel.l === null}>
-            {saving ? "Saving…" : "Save change"}
+            {saving ? t("saving") : t("saveChange")}
           </Button>
         ) : null}
 
@@ -326,7 +333,7 @@ export function AssessmentRunner({
           onClick={() => setCursor((c) => c + 1)}
           data-testid="forward-button"
         >
-          {cursor + 1 < answeredCount ? "Forward" : "Continue"}{" "}
+          {cursor + 1 < answeredCount ? t("forward") : t("continue")}{" "}
           <ArrowRight className="size-4" />
         </Button>
       </footer>
@@ -334,15 +341,12 @@ export function AssessmentRunner({
       <Dialog open={editId !== null} onOpenChange={(open) => !open && setEditId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit this value</DialogTitle>
-            <DialogDescription>
-              Reword the name or definition so it speaks in your own voice. Your
-              wording is used everywhere this value appears.
-            </DialogDescription>
+            <DialogTitle>{t("editDialogTitle")}</DialogTitle>
+            <DialogDescription>{t("editDialogDescription")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">
-              <Label htmlFor="edit-name">Name</Label>
+              <Label htmlFor="edit-name">{t("nameLabel")}</Label>
               <Input
                 id="edit-name"
                 value={draftName}
@@ -351,7 +355,7 @@ export function AssessmentRunner({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="edit-desc">What it means to you</Label>
+              <Label htmlFor="edit-desc">{t("meaningLabel")}</Label>
               <Textarea
                 id="edit-desc"
                 value={draftDesc}
@@ -363,14 +367,14 @@ export function AssessmentRunner({
           </div>
           <DialogFooter className="sm:justify-between">
             <Button type="button" variant="ghost" onClick={resetEditorToOriginal}>
-              Reset to original
+              {t("resetToOriginal")}
             </Button>
             <Button
               type="button"
               onClick={saveValueEdit}
               disabled={savingEdit || !draftName.trim() || !draftDesc.trim()}
             >
-              {savingEdit ? "Saving…" : "Save"}
+              {savingEdit ? t("saving") : t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -379,12 +383,9 @@ export function AssessmentRunner({
       <AlertDialog open={invalidationOpen} onOpenChange={setInvalidationOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Your top 25 changed</AlertDialogTitle>
+            <AlertDialogTitle>{t("invalidationTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              That change reshuffled which values made your top 25, so the final
-              ranking rounds have been reset — you&apos;ll redo just those{" "}
-              {sets.refinement?.length ?? 15} quick rounds. Everything else is
-              saved.
+              {t("invalidationBody", { count: sets.refinement?.length ?? 15 })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -394,7 +395,7 @@ export function AssessmentRunner({
                 setCursor(choices.length);
               }}
             >
-              Continue
+              {t("invalidationContinue")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

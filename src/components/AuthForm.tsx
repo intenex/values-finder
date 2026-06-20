@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { PasswordInput } from "@/components/PasswordInput";
@@ -16,6 +17,7 @@ interface AuthFormProps {
 }
 
 export function AuthForm({ mode, action, next }: AuthFormProps) {
+  const t = useTranslations("auth");
   const [state, formAction, pending] = useActionState(action, { error: null });
   const [password, setPassword] = useState("");
 
@@ -23,25 +25,25 @@ export function AuthForm({ mode, action, next }: AuthFormProps) {
     <form action={formAction} className="space-y-5">
       {next ? <input type="hidden" name="next" value={next} /> : null}
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t("emailLabel")}</Label>
         <Input
           id="email"
           name="email"
           type="email"
           autoComplete="email"
           required
-          placeholder="you@example.com"
+          placeholder={t("emailPlaceholder")}
         />
       </div>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t("passwordLabel")}</Label>
           {mode === "login" ? (
             <Link
               href="/forgot-password"
               className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
             >
-              Forgot password?
+              {t("forgotLink")}
             </Link>
           ) : null}
         </div>
@@ -51,7 +53,7 @@ export function AuthForm({ mode, action, next }: AuthFormProps) {
           autoComplete={mode === "login" ? "current-password" : "new-password"}
           required
           minLength={8}
-          placeholder={mode === "signup" ? "At least 8 characters" : undefined}
+          placeholder={mode === "signup" ? t("passwordPlaceholderSignup") : undefined}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -65,31 +67,31 @@ export function AuthForm({ mode, action, next }: AuthFormProps) {
       <Button type="submit" className="w-full" disabled={pending}>
         {pending
           ? mode === "login"
-            ? "Signing in…"
-            : "Creating account…"
+            ? t("signingIn")
+            : t("creatingAccount")
           : mode === "login"
-            ? "Sign in"
-            : "Create account"}
+            ? t("signInCta")
+            : t("createAccountCta")}
       </Button>
       <p className="text-center text-sm text-muted-foreground">
         {mode === "login" ? (
           <>
-            New here?{" "}
+            {t("newHere")}{" "}
             <Link
               href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"}
               className="font-medium text-foreground underline underline-offset-4"
             >
-              Create an account
+              {t("createAccountLink")}
             </Link>
           </>
         ) : (
           <>
-            Already have an account?{" "}
+            {t("alreadyHaveAccount")}{" "}
             <Link
               href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"}
               className="font-medium text-foreground underline underline-offset-4"
             >
-              Sign in
+              {t("signInLink")}
             </Link>
           </>
         )}

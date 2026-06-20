@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { saveCustomizations } from "../complete-actions";
@@ -7,12 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { getValueText } from "@/i18n/values-server";
 import { getActiveAssessment } from "@/lib/assessment";
 import { requireUser } from "@/lib/auth/session";
 import { replay } from "@/lib/engine/replay";
-import { getValue } from "@/lib/values";
 
-export const metadata: Metadata = { title: "Make them yours" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return { title: t("makeThemYours") };
+}
 
 export default async function CustomizePage() {
   const user = await requireUser("/assessment/customize");
@@ -22,19 +26,19 @@ export default async function CustomizePage() {
   const state = replay(assessment.sets, assessment.choices);
   if (state.phase !== "customize") redirect("/assessment");
 
+  const t = await getTranslations("customize");
+  const valueText = await getValueText();
+
   return (
     <>
       <SiteNav email={user.email} />
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-12 sm:px-6">
-        <h1 className="font-display text-3xl tracking-tight">Make them yours</h1>
-        <p className="mt-3 mb-10 text-muted-foreground">
-          Reword any of your ten values so they speak in your own voice — or
-          leave them exactly as they are.
-        </p>
+        <h1 className="font-display text-3xl tracking-tight">{t("title")}</h1>
+        <p className="mt-3 mb-10 text-muted-foreground">{t("subtitle")}</p>
 
         <form action={saveCustomizations} className="space-y-8">
           {state.top10.map((id, i) => {
-            const v = getValue(id);
+            const v = valueText(id);
             const custom = assessment.customizations?.[id];
             return (
               <fieldset key={id} className="rounded-xl border bg-card p-5 shadow-xs">
@@ -43,7 +47,7 @@ export default async function CustomizePage() {
                 </legend>
                 <div className="space-y-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor={`name-${id}`}>Name</Label>
+                    <Label htmlFor={`name-${id}`}>{t("nameLabel")}</Label>
                     <Input
                       id={`name-${id}`}
                       name={`name-${id}`}
@@ -53,7 +57,7 @@ export default async function CustomizePage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor={`description-${id}`}>What it means to you</Label>
+                    <Label htmlFor={`description-${id}`}>{t("meaningLabel")}</Label>
                     <Textarea
                       id={`description-${id}`}
                       name={`description-${id}`}
@@ -70,9 +74,9 @@ export default async function CustomizePage() {
 
           <div className="flex justify-between">
             <Button variant="outline" asChild>
-              <Link href="/assessment/results">Back</Link>
+              <Link href="/assessment/results">{t("back")}</Link>
             </Button>
-            <Button type="submit">Continue to reflection</Button>
+            <Button type="submit">{t("continueToReflection")}</Button>
           </div>
         </form>
       </main>

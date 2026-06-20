@@ -2,9 +2,11 @@
 
 import { and, desc, eq, isNotNull } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { getValueText } from "@/i18n/values-server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { userValuesSessions, type SavedValue } from "@/lib/db/schema";
+import { getValue } from "@/lib/values";
 
 export async function getLatestCompletedSession(userId: string) {
   const [row] = await db
@@ -50,6 +52,12 @@ export async function saveReassessment(formData: FormData): Promise<void> {
   const latest = await getLatestCompletedSession(user.id);
   if (!latest) redirect("/profile");
 
+  // The reassess form pre-fills non-customized values in the active language,
+  // so compare each submission against what the user actually saw — otherwise
+  // an untouched value in a non-English locale looks like a fresh edit. Store
+  // canonical English for still-non-custom values so snapshots stay language-
+  // independent and re-localize on display.
+  const valueText = await getValueText();
   const topValues: SavedValue[] = latest.topValues.map((v) => {
     const name = formData.get(`name-${v.id}`);
     const description = formData.get(`description-${v.id}`);
@@ -67,12 +75,21 @@ export async function saveReassessment(formData: FormData): Promise<void> {
     ) {
       redirect("/profile/reassess?error=1");
     }
+    const seen = v.isCustom
+      ? { name: v.name, description: v.description }
+      : valueText(v.id);
+    const isCustom =
+      v.isCustom ||
+      name.trim() !== seen.name ||
+      description.trim() !== seen.description;
+    const canonical = getValue(v.id);
     return {
-      ...v,
-      name: name.trim(),
-      description: description.trim(),
+      id: v.id,
+      name: isCustom ? name.trim() : canonical.name,
+      description: isCustom ? description.trim() : canonical.description,
       rating,
-      isCustom: v.isCustom || name.trim() !== v.name || description.trim() !== v.description,
+      score: v.score,
+      isCustom,
     };
   });
 

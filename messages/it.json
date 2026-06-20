@@ -1,0 +1,584 @@
+{
+  "meta": {
+    "defaultTitle": "Valori — scopri ciò che conta di più",
+    "titleTemplate": "{page} · Valori",
+    "description": "Un esercizio guidato per scoprire, ordinare e riflettere sui tuoi dieci valori personali più importanti.",
+    "signIn": "Accedi",
+    "createAccount": "Crea account",
+    "resetPassword": "Reimposta la password",
+    "chooseNewPassword": "Scegli una nuova password",
+    "howItWorks": "Come funziona",
+    "exercise": "Il tuo esercizio sui valori",
+    "top10": "I tuoi 10 valori principali",
+    "makeThemYours": "Rendili tuoi",
+    "reflect": "Rifletti",
+    "reassess": "Rivaluta i tuoi valori",
+    "profile": "Il tuo profilo",
+    "authorize": "Autorizza"
+  },
+  "nav": {
+    "brand": "Valori",
+    "exercise": "Esercizio",
+    "results": "Risultati",
+    "signOut": "Esci",
+    "signIn": "Accedi",
+    "getStarted": "Inizia"
+  },
+  "language": {
+    "choose": "Scegli la lingua"
+  },
+  "landing": {
+    "eyebrow": "Un esercizio guidato sui valori",
+    "title": "Cosa conta di più per te?",
+    "body": "Esplora {count} valori attraverso una serie di scelte semplici e fai emergere i dieci che contano di più — poi rifletti su quanto pienamente li stai vivendo. I tuoi progressi vengono salvati man mano, così puoi fermarti in qualsiasi momento e riprendere da dove avevi lasciato.",
+    "begin": "Inizia",
+    "continue": "Continua il tuo esercizio",
+    "haveAccount": "Ho già un account",
+    "footnote": "Richiede circa 15–20 minuti · Gratuito"
+  },
+  "intro": {
+    "eyebrow": "Prima di iniziare",
+    "title": "Scopri ciò che conta di più per te",
+    "subtitle": "Questo breve esercizio ti aiuta a far emergere — e ordinare — i tuoi dieci valori personali più importanti attraverso una serie di scelte semplici.",
+    "step1Title": "Confronta cinque alla volta",
+    "step1Body": "Vedrai piccoli gruppi di valori scelti da una raccolta di {count}. A ogni turno, scegli quello che conta di Più per te e quello che conta di Meno.",
+    "step2Title": "Non ci sono risposte sbagliate",
+    "step2Body": "Ogni valore qui è un buon valore — si tratta di ciò che conta di più per te in questo momento, non di ciò che è “giusto”. Segui l'istinto; il primo che scegli diventa il tuo Più importante.",
+    "step3Title": "Rendili tuoi",
+    "step3Body": "Qualsiasi valore può essere riformulato per adattarsi alla tua voce in qualunque momento — basta toccare l'icona della matita su una scheda. Le tue parole ti accompagnano fino ai risultati.",
+    "step4Title": "I tuoi progressi vengono salvati",
+    "step4Body": "Ogni scelta viene salvata man mano, così puoi fermarti in qualsiasi momento e riprendere esattamente da dove avevi lasciato — su qualsiasi dispositivo. Richiede circa 15–20 minuti.",
+    "begin": "Inizia",
+    "continue": "Continua il tuo esercizio",
+    "inProgressNote": "Sei già a metà strada — riprendi da dove avevi lasciato."
+  },
+  "auth": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "tu@esempio.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholderSignup": "Almeno 8 caratteri",
+    "forgotLink": "Password dimenticata?",
+    "showPassword": "Mostra la password",
+    "hidePassword": "Nascondi la password",
+    "signInCta": "Accedi",
+    "signingIn": "Accesso in corso…",
+    "createAccountCta": "Crea account",
+    "creatingAccount": "Creazione dell'account…",
+    "newHere": "Sei nuovo qui?",
+    "createAccountLink": "Crea un account",
+    "alreadyHaveAccount": "Hai già un account?",
+    "signInLink": "Accedi",
+    "strengthTooShort": "Troppo corta",
+    "strengthWeak": "Debole",
+    "strengthFair": "Discreta",
+    "strengthGood": "Buona",
+    "strengthStrong": "Forte",
+    "strengthHint": "usa 12+ caratteri con un mix di lettere, numeri e simboli.",
+    "loginTitle": "Bentornato",
+    "loginSubtitle": "Accedi per continuare il tuo esercizio sui valori. Se hai usato la versione precedente di questo sito, il tuo account funziona ancora — potresti solo dover accedere di nuovo.",
+    "signupTitle": "Crea il tuo account",
+    "signupSubtitle": "I tuoi progressi vengono salvati di continuo, così puoi fermarti in qualsiasi momento e riprendere da dove avevi lasciato — su qualsiasi dispositivo.",
+    "resetNotice": "La tua password è stata reimpostata. Accedi con la nuova password.",
+    "forgotTitle": "Reimposta la password",
+    "forgotSubtitle": "Inserisci l'email con cui ti sei registrato e ti invieremo un link per scegliere una nuova password.",
+    "forgotSend": "Invia il link di reimpostazione",
+    "forgotSending": "Invio in corso…",
+    "forgotSent": "Se esiste un account per quell'email, ti abbiamo inviato un link per reimpostare la password. Controlla la tua casella di posta.",
+    "forgotRemembered": "Te la sei ricordata?",
+    "forgotBackToSignIn": "Torna all'accesso",
+    "resetTitle": "Scegli una nuova password",
+    "resetInvalid": "Questo link di reimpostazione non è valido o è scaduto. Richiedine uno nuovo per riprovare.",
+    "resetRequestNew": "Richiedi un nuovo link di reimpostazione",
+    "resetSubtitle": "Inserisci una nuova password per il tuo account.",
+    "resetNewPasswordLabel": "Nuova password",
+    "resetSet": "Imposta la nuova password",
+    "resetSaving": "Salvataggio in corso…",
+    "errorInvalidEmail": "Inserisci un indirizzo email valido",
+    "errorPasswordMin": "La password deve contenere almeno 8 caratteri",
+    "errorInvalidCredentials": "Email o password non validi",
+    "errorAccountExists": "Esiste già un account con questa email",
+    "errorSomethingWrong": "Qualcosa è andato storto durante la creazione del tuo account",
+    "errorResetExpired": "Questo link di reimpostazione non è valido o è scaduto. Richiedine uno nuovo."
+  },
+  "assessment": {
+    "roundOf": "Turno {current} di {total}",
+    "phaseDiscovering": "Scoperta",
+    "phaseNarrowing": "Selezione",
+    "answered": "{count} completati",
+    "prompt": "Scegli il valore che conta di <most>Più</most> e quello che conta di <least>Meno</least> per te.",
+    "editHintPrefix": "Puoi modificare qualsiasi valore o definizione in ogni momento — basta toccare l'icona",
+    "editHintSuffix": ".",
+    "editingPast": "Hai già risposto a questo turno in precedenza — modificalo se non ti rispecchia più.",
+    "milestone25": "Sei a un quarto del percorso — il quadro si sta facendo chiaro.",
+    "milestone50": "A metà strada. Fai un respiro — stai andando bene.",
+    "milestone75": "Tre quarti del percorso. I tuoi valori principali stanno prendendo forma.",
+    "discoveryComplete": "Scoperta completata — questi ultimi turni ordinano i tuoi 25 valori principali.",
+    "back": "Indietro",
+    "forward": "Avanti",
+    "continue": "Continua",
+    "saveChange": "Salva la modifica",
+    "saving": "Salvataggio in corso…",
+    "mostBadge": "Più",
+    "leastBadge": "Meno",
+    "mostImportant": "Più importante",
+    "leastImportant": "Meno importante",
+    "editValueAria": "Modifica {name}",
+    "editValueTitle": "Modifica questo valore o la sua definizione",
+    "editDialogTitle": "Modifica questo valore",
+    "editDialogDescription": "Riformula il nome o la definizione perché parlino con la tua voce. Le tue parole verranno usate ovunque appaia questo valore.",
+    "nameLabel": "Nome",
+    "meaningLabel": "Cosa significa per te",
+    "resetToOriginal": "Ripristina l'originale",
+    "save": "Salva",
+    "valueUpdated": "Valore aggiornato.",
+    "answerUpdated": "Risposta aggiornata.",
+    "somethingWrong": "Qualcosa è andato storto — riprova.",
+    "couldNotSave": "Impossibile salvare — riprova.",
+    "invalidationTitle": "I tuoi 25 valori principali sono cambiati",
+    "invalidationBody": "Quella modifica ha rimescolato quali valori rientrano nei tuoi 25 principali, quindi i turni di ordinamento finale sono stati azzerati — dovrai rifare solo quei {count} turni veloci. Tutto il resto è salvato.",
+    "invalidationContinue": "Continua"
+  },
+  "results": {
+    "eyebrow": "I tuoi risultati",
+    "title": "I tuoi dieci valori più importanti",
+    "body": "Su {total} turni di scelte, questi sono i valori che sono emersi in cima. Ora puoi affinarne le parole, poi riflettere su quanto pienamente stai vivendo ciascuno di essi.",
+    "continue": "Continua"
+  },
+  "customize": {
+    "title": "Rendili tuoi",
+    "subtitle": "Riformula uno qualsiasi dei tuoi dieci valori perché parli con la tua voce — oppure lasciali esattamente come sono.",
+    "nameLabel": "Nome",
+    "meaningLabel": "Cosa significa per te",
+    "back": "Indietro",
+    "continueToReflection": "Continua verso la riflessione"
+  },
+  "rate": {
+    "title": "Quanto pienamente stai vivendo ciascun valore?",
+    "subtitle": "Per ciascuno dei tuoi dieci valori, valuta quanto pienamente è presente nella tua vita oggi — 1 significa per nulla, 10 significa pienamente. Non ci sono risposte sbagliate; è un'istantanea su cui riflettere.",
+    "notLivingYet": "Non lo vivo ancora",
+    "livingFully": "Lo vivo pienamente",
+    "saveMyValues": "Salva i miei valori",
+    "saving": "Salvataggio in corso…",
+    "livingAria": "Quanto pienamente stai vivendo {name}?"
+  },
+  "profile": {
+    "title": "I tuoi valori",
+    "valuesHeading": "I tuoi valori",
+    "completedCount": "{count, plural, one {# esercizio completato} other {# esercizi completati}}",
+    "reassess": "Rivaluta",
+    "retake": "Rifai il test",
+    "reassessRetakeHint": "Rivaluta mantiene i tuoi dieci valori e li valuta di nuovo come una nuova istantanea; Rifai il test riavvia l'intero esercizio da capo.",
+    "inProgressBanner": "Hai un esercizio in corso.",
+    "continue": "Continua",
+    "retakeDialogTitle": "Riavviare l'intero esercizio da capo?",
+    "retakeDialogBodyActive": "Questo scarta le risposte in corso e avvia un nuovo esercizio. I tuoi risultati completati vengono conservati.",
+    "retakeDialogBodyIdle": "Questo avvia un nuovo esercizio dall'inizio. I tuoi risultati completati vengono conservati.",
+    "cancel": "Annulla",
+    "startOver": "Ricomincia da capo",
+    "myTenValues": "I miei dieci valori",
+    "livingIt": "lo vivo {rating}/10",
+    "exportResults": "Esporta i risultati",
+    "exporting": "Esportazione in corso…",
+    "exportError": "Impossibile esportare l'immagine — riprova.",
+    "emptyTitle": "Il tuo profilo",
+    "emptyBodyActive": "Hai un esercizio in corso — riprendi esattamente da dove avevi lasciato.",
+    "emptyBodyIdle": "Non hai ancora completato l'esercizio sui valori.",
+    "beginExercise": "Inizia l'esercizio",
+    "continueExercise": "Continua il tuo esercizio",
+    "savedToast": "I tuoi valori sono salvati. Torna quando vuoi per riflettere o rivalutare.",
+    "unchangedToast": "Nessuna modifica da salvare — la tua ultima istantanea è invariata."
+  },
+  "reassess": {
+    "title": "Rivaluta i tuoi valori",
+    "subtitle": "Rivisita i tuoi dieci valori: adatta le parole se la tua comprensione è cambiata e rivaluta quanto pienamente stai vivendo ciascuno di essi oggi. Questo salva una nuova istantanea — i tuoi risultati precedenti rimangono nella tua cronologia.",
+    "nameLabel": "Nome",
+    "meaningLabel": "Cosa significa per te",
+    "livingLabel": "Quanto pienamente lo stai vivendo?",
+    "livingAria": "Quanto pienamente stai vivendo {name}?",
+    "saveSnapshot": "Salva la nuova istantanea",
+    "saving": "Salvataggio in corso…",
+    "cancel": "Annulla",
+    "discardTitle": "Scartare le tue modifiche?",
+    "discardBody": "Hai modifiche non salvate. Uscire ora le scarterà — le tue istantanee precedenti rimangono nella tua cronologia.",
+    "keepEditing": "Continua a modificare",
+    "discard": "Scarta"
+  },
+  "consent": {
+    "title": "Autorizza l'accesso",
+    "body": "Questa applicazione non è ancora configurata per richiedere il tuo consenso. Se sei arrivato a questa pagina senza volerlo, torna all'app da cui provieni."
+  },
+  "values": {
+    "1": {
+      "name": "ACCETTAZIONE",
+      "description": "essere accettato per come sono"
+    },
+    "2": {
+      "name": "ACCURATEZZA",
+      "description": "essere accurato nelle mie opinioni e convinzioni"
+    },
+    "3": {
+      "name": "REALIZZAZIONE",
+      "description": "ottenere traguardi importanti"
+    },
+    "4": {
+      "name": "AVVENTURA",
+      "description": "vivere esperienze nuove ed entusiasmanti"
+    },
+    "5": {
+      "name": "FASCINO",
+      "description": "essere fisicamente attraente"
+    },
+    "6": {
+      "name": "AUTORITÀ",
+      "description": "guidare gli altri ed esserne responsabile"
+    },
+    "7": {
+      "name": "AUTONOMIA",
+      "description": "essere indipendente e padrone delle mie scelte"
+    },
+    "8": {
+      "name": "BELLEZZA",
+      "description": "apprezzare la bellezza intorno a me"
+    },
+    "9": {
+      "name": "PRENDERSI CURA",
+      "description": "prendermi cura degli altri"
+    },
+    "10": {
+      "name": "SFIDA",
+      "description": "affrontare compiti e problemi difficili"
+    },
+    "11": {
+      "name": "CAMBIAMENTO",
+      "description": "avere una vita ricca di cambiamento e varietà"
+    },
+    "12": {
+      "name": "AGIATEZZA",
+      "description": "avere una vita piacevole e confortevole"
+    },
+    "13": {
+      "name": "IMPEGNO",
+      "description": "assumere impegni duraturi e significativi"
+    },
+    "14": {
+      "name": "COMPASSIONE",
+      "description": "sentire e agire con premura verso gli altri"
+    },
+    "15": {
+      "name": "CONTRIBUTO",
+      "description": "lasciare un contributo duraturo nel mondo"
+    },
+    "16": {
+      "name": "COOPERAZIONE",
+      "description": "lavorare insieme agli altri in modo collaborativo"
+    },
+    "17": {
+      "name": "CORTESIA",
+      "description": "essere premuroso e gentile verso gli altri"
+    },
+    "18": {
+      "name": "CREATIVITÀ",
+      "description": "avere idee nuove e originali"
+    },
+    "19": {
+      "name": "AFFIDABILITÀ",
+      "description": "essere affidabile e degno di fiducia"
+    },
+    "20": {
+      "name": "DOVERE",
+      "description": "adempiere ai miei doveri e obblighi"
+    },
+    "21": {
+      "name": "ECOLOGIA",
+      "description": "vivere in armonia con l'ambiente"
+    },
+    "22": {
+      "name": "EMOZIONE",
+      "description": "avere una vita ricca di brividi e stimoli"
+    },
+    "23": {
+      "name": "FEDELTÀ",
+      "description": "essere leale e sincero nelle relazioni"
+    },
+    "24": {
+      "name": "FAMA",
+      "description": "essere conosciuto e riconosciuto"
+    },
+    "25": {
+      "name": "FAMIGLIA",
+      "description": "avere una famiglia felice e affettuosa"
+    },
+    "26": {
+      "name": "FORMA FISICA",
+      "description": "essere in forma e fisicamente forte"
+    },
+    "27": {
+      "name": "FLESSIBILITÀ",
+      "description": "adattarmi con facilità alle nuove circostanze"
+    },
+    "28": {
+      "name": "PERDONO",
+      "description": "saper perdonare gli altri"
+    },
+    "29": {
+      "name": "AMICIZIA",
+      "description": "avere amici intimi e capaci di sostenermi"
+    },
+    "30": {
+      "name": "DIVERTIMENTO",
+      "description": "giocare e divertirmi"
+    },
+    "31": {
+      "name": "GENEROSITÀ",
+      "description": "donare agli altri ciò che ho"
+    },
+    "32": {
+      "name": "AUTENTICITÀ DI SÉ",
+      "description": "agire in modo fedele a chi sono"
+    },
+    "33": {
+      "name": "VOLONTÀ DI DIO",
+      "description": "cercare e seguire la volontà di Dio"
+    },
+    "34": {
+      "name": "CRESCITA",
+      "description": "continuare a cambiare e a crescere"
+    },
+    "35": {
+      "name": "SALUTE",
+      "description": "essere sano e in buona salute"
+    },
+    "36": {
+      "name": "DISPONIBILITÀ",
+      "description": "essere d'aiuto agli altri"
+    },
+    "37": {
+      "name": "ONESTÀ",
+      "description": "essere onesto e sincero"
+    },
+    "38": {
+      "name": "SPERANZA",
+      "description": "mantenere uno sguardo positivo e ottimista"
+    },
+    "39": {
+      "name": "UMILTÀ",
+      "description": "essere modesto e privo di presunzione"
+    },
+    "40": {
+      "name": "UMORISMO",
+      "description": "cogliere il lato comico di me stesso e del mondo"
+    },
+    "41": {
+      "name": "INDIPENDENZA",
+      "description": "essere libero dal dipendere dagli altri"
+    },
+    "42": {
+      "name": "OPEROSITÀ",
+      "description": "impegnarmi con dedizione nei compiti della mia vita"
+    },
+    "43": {
+      "name": "PACE INTERIORE",
+      "description": "vivere una pace personale"
+    },
+    "44": {
+      "name": "INTIMITÀ",
+      "description": "condividere con gli altri le mie esperienze più profonde"
+    },
+    "45": {
+      "name": "GIUSTIZIA",
+      "description": "promuovere un trattamento equo e paritario per tutti"
+    },
+    "46": {
+      "name": "CONOSCENZA",
+      "description": "imparare e offrire conoscenza preziosa"
+    },
+    "47": {
+      "name": "SVAGO",
+      "description": "prendermi il tempo per rilassarmi e godermi la vita"
+    },
+    "48": {
+      "name": "ESSERE AMATO",
+      "description": "essere amato dalle persone a me care"
+    },
+    "49": {
+      "name": "AMARE",
+      "description": "donare amore agli altri"
+    },
+    "50": {
+      "name": "PADRONANZA",
+      "description": "essere capace nelle mie attività quotidiane"
+    },
+    "51": {
+      "name": "CONSAPEVOLEZZA",
+      "description": "vivere presente e consapevole nel momento attuale"
+    },
+    "52": {
+      "name": "MODERAZIONE",
+      "description": "evitare gli eccessi e trovare una giusta misura"
+    },
+    "53": {
+      "name": "MONOGAMIA",
+      "description": "avere una sola relazione intima e affettuosa"
+    },
+    "54": {
+      "name": "ANTICONFORMISMO",
+      "description": "mettere in discussione l'autorità e le convenzioni"
+    },
+    "55": {
+      "name": "ACCUDIMENTO",
+      "description": "prendermi cura degli altri e nutrirli"
+    },
+    "56": {
+      "name": "APERTURA",
+      "description": "essere aperto a nuove esperienze, idee e possibilità"
+    },
+    "57": {
+      "name": "ORDINE",
+      "description": "avere una vita ben ordinata e organizzata"
+    },
+    "58": {
+      "name": "PASSIONE",
+      "description": "provare sentimenti profondi per idee, attività o persone"
+    },
+    "59": {
+      "name": "PIACERE",
+      "description": "sentirmi bene"
+    },
+    "60": {
+      "name": "POPOLARITÀ",
+      "description": "essere benvoluto da molte persone"
+    },
+    "61": {
+      "name": "POTERE",
+      "description": "avere controllo sugli altri"
+    },
+    "62": {
+      "name": "SCOPO",
+      "description": "avere un senso e una direzione nella mia vita"
+    },
+    "63": {
+      "name": "RAZIONALITÀ",
+      "description": "lasciarmi guidare dalla ragione e dalla logica"
+    },
+    "64": {
+      "name": "REALISMO",
+      "description": "vedere e agire in modo realistico e pratico"
+    },
+    "65": {
+      "name": "RESPONSABILITÀ",
+      "description": "prendere e portare a termine decisioni responsabili"
+    },
+    "66": {
+      "name": "RISCHIO",
+      "description": "correre rischi e cogliere le occasioni"
+    },
+    "67": {
+      "name": "ROMANTICISMO",
+      "description": "avere un amore intenso ed entusiasmante nella mia vita"
+    },
+    "68": {
+      "name": "ACCETTAZIONE DI SÉ",
+      "description": "accettare me stesso per come sono"
+    },
+    "69": {
+      "name": "SICUREZZA",
+      "description": "essere al sicuro e protetto"
+    },
+    "70": {
+      "name": "AUTOCONTROLLO",
+      "description": "essere disciplinato nelle mie azioni"
+    },
+    "71": {
+      "name": "AUTOSTIMA",
+      "description": "avere una buona opinione di me stesso"
+    },
+    "72": {
+      "name": "CONOSCENZA DI SÉ",
+      "description": "avere una comprensione profonda e sincera di me stesso"
+    },
+    "73": {
+      "name": "SERVIZIO",
+      "description": "essere al servizio degli altri"
+    },
+    "74": {
+      "name": "SESSUALITÀ",
+      "description": "avere una vita sessuale attiva e appagante"
+    },
+    "75": {
+      "name": "SEMPLICITÀ",
+      "description": "vivere in modo semplice, con bisogni minimi"
+    },
+    "76": {
+      "name": "SOLITUDINE",
+      "description": "avere tempo e spazio in cui stare lontano dagli altri"
+    },
+    "77": {
+      "name": "SPIRITUALITÀ",
+      "description": "crescere e maturare spiritualmente"
+    },
+    "78": {
+      "name": "STABILITÀ",
+      "description": "avere una vita che resti piuttosto costante"
+    },
+    "79": {
+      "name": "TOLLERANZA",
+      "description": "accettare e rispettare chi è diverso da me"
+    },
+    "80": {
+      "name": "TRADIZIONE",
+      "description": "seguire i modelli rispettati del passato"
+    },
+    "81": {
+      "name": "VIRTÙ",
+      "description": "vivere una vita moralmente integra ed esemplare"
+    },
+    "82": {
+      "name": "RICCHEZZA",
+      "description": "avere denaro in abbondanza"
+    },
+    "83": {
+      "name": "PACE NEL MONDO",
+      "description": "impegnarmi a promuovere la pace nel mondo"
+    },
+    "84": {
+      "name": "PRESENZA",
+      "description": "essere pienamente coinvolto nel momento presente"
+    },
+    "85": {
+      "name": "INTELLIGENZA EMOTIVA",
+      "description": "comprendere e gestire con abilità le mie emozioni"
+    },
+    "86": {
+      "name": "CATALIZZATORE",
+      "description": "avviare un cambiamento positivo in sistemi e comunità"
+    },
+    "87": {
+      "name": "INTEGRITÀ",
+      "description": "allineare le mie azioni ai miei valori più profondi"
+    },
+    "88": {
+      "name": "TRASMISSIONE",
+      "description": "condividere la mia esperienza spirituale a beneficio degli altri"
+    },
+    "89": {
+      "name": "VULNERABILITÀ",
+      "description": "essere aperto sui miei veri sentimenti ed esperienze"
+    },
+    "90": {
+      "name": "IMPATTO",
+      "description": "creare un cambiamento positivo e duraturo nel mondo"
+    },
+    "91": {
+      "name": "EQUANIMITÀ",
+      "description": "mantenere l'equilibrio tra gli alti e bassi della vita"
+    },
+    "92": {
+      "name": "COMUNITÀ",
+      "description": "far parte di un gruppo solidale e orientato alla crescita"
+    },
+    "93": {
+      "name": "AUTENTICITÀ",
+      "description": "vivere in sintonia con la mia vera natura"
+    }
+  }
+}

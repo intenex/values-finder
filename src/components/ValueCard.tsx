@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowDown, ArrowUp, Pencil } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { ValueDef } from "@/lib/values";
 
@@ -45,6 +46,7 @@ export function ValueCard({
   onAssign,
   onEdit,
 }: ValueCardProps) {
+  const t = useTranslations("assessment");
   // Once one dimension is chosen, that dimension's buttons fade to neutral on
   // the other cards, so only the colour you still need to pick stays vivid.
   const mostStyle: ChipStyle =
@@ -84,12 +86,12 @@ export function ValueCard({
         </h3>
         {role === "most" && (
           <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-most px-2 py-0.5 text-xs font-medium text-white">
-            <ArrowUp className="size-3" /> Most
+            <ArrowUp className="size-3" /> {t("mostBadge")}
           </span>
         )}
         {role === "least" && (
           <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-least px-2 py-0.5 text-xs font-medium text-white">
-            <ArrowDown className="size-3" /> Least
+            <ArrowDown className="size-3" /> {t("leastBadge")}
           </span>
         )}
       </div>
@@ -109,7 +111,7 @@ export function ValueCard({
           )}
           data-testid="assign-most"
         >
-          Most important
+          {t("mostImportant")}
         </button>
         <button
           type="button"
@@ -124,12 +126,12 @@ export function ValueCard({
           )}
           data-testid="assign-least"
         >
-          Least important
+          {t("leastImportant")}
         </button>
         <button
           type="button"
-          aria-label={`Edit ${value.name}`}
-          title="Edit this value or its definition"
+          aria-label={t("editValueAria", { name: value.name })}
+          title={t("editValueTitle")}
           disabled={disabled}
           onClick={(e) => {
             e.stopPropagation();

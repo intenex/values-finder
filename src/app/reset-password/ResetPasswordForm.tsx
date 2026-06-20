@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
 import { PasswordInput } from "@/components/PasswordInput";
 import { PasswordStrength } from "@/components/PasswordStrength";
@@ -8,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { resetPassword } from "@/lib/auth/actions";
 
 export function ResetPasswordForm({ token }: { token: string }) {
+  const t = useTranslations("auth");
   const [state, formAction, pending] = useActionState(resetPassword, {
     error: null,
   });
@@ -17,14 +19,14 @@ export function ResetPasswordForm({ token }: { token: string }) {
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="token" value={token} />
       <div className="space-y-2">
-        <Label htmlFor="password">New password</Label>
+        <Label htmlFor="password">{t("resetNewPasswordLabel")}</Label>
         <PasswordInput
           id="password"
           name="password"
           autoComplete="new-password"
           required
           minLength={8}
-          placeholder="At least 8 characters"
+          placeholder={t("passwordPlaceholderSignup")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -36,7 +38,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
         </p>
       ) : null}
       <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? "Saving…" : "Set new password"}
+        {pending ? t("resetSaving") : t("resetSet")}
       </Button>
     </form>
   );

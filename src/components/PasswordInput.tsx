@@ -1,6 +1,7 @@
 "use client";
 
 import { Eye, EyeOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ export function PasswordInput({
   ...props
 }: React.ComponentProps<"input">) {
   const [show, setShow] = React.useState(false);
+  const t = useTranslations("auth");
 
   return (
     <div className="relative">
@@ -26,7 +28,7 @@ export function PasswordInput({
       <button
         type="button"
         onClick={() => setShow((s) => !s)}
-        aria-label={show ? "Hide password" : "Show password"}
+        aria-label={show ? t("hidePassword") : t("showPassword")}
         aria-pressed={show}
         tabIndex={-1}
         className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"

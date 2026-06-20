@@ -1,0 +1,584 @@
+{
+  "meta": {
+    "defaultTitle": "价值观 — 探索对你最重要的东西",
+    "titleTemplate": "{page} · 价值观",
+    "description": "一段引导式练习，帮你探索、排序并反思对你最重要的十大个人价值观。",
+    "signIn": "登录",
+    "createAccount": "注册账户",
+    "resetPassword": "重置密码",
+    "chooseNewPassword": "设置新密码",
+    "howItWorks": "练习介绍",
+    "exercise": "你的价值观练习",
+    "top10": "你的十大价值观",
+    "makeThemYours": "用你自己的话表达",
+    "reflect": "反思",
+    "reassess": "重新评估你的价值观",
+    "profile": "我的主页",
+    "authorize": "授权"
+  },
+  "nav": {
+    "brand": "价值观",
+    "exercise": "练习",
+    "results": "结果",
+    "signOut": "退出登录",
+    "signIn": "登录",
+    "getStarted": "开始"
+  },
+  "language": {
+    "choose": "选择语言"
+  },
+  "landing": {
+    "eyebrow": "一段引导式价值观练习",
+    "title": "什么对你最重要？",
+    "body": "通过一系列简单的选择，从 {count} 项价值观中梳理出对你最重要的十项 —— 再反思你在生活中践行它们的程度。你的进度会随时自动保存，所以可以随时暂停，下次从中断的地方继续。",
+    "begin": "开始",
+    "continue": "继续你的练习",
+    "haveAccount": "我已有账户",
+    "footnote": "约需 15–20 分钟 · 完全免费"
+  },
+  "intro": {
+    "eyebrow": "开始之前",
+    "title": "探索对你最重要的东西",
+    "subtitle": "这段简短的练习，通过一系列简单的选择，帮你梳理并排序出对你最重要的十大个人价值观。",
+    "step1Title": "每次比较五项",
+    "step1Body": "你会看到从 {count} 项价值观库中抽取的小组合。每一轮，挑出对你最重要的一项，以及最不重要的一项。",
+    "step2Title": "没有标准答案",
+    "step2Body": "这里的每一项价值观都很好 —— 重要的是此刻对你最重要的是什么，而不是哪个才“正确”。跟着直觉走；你最先选的那项就成为你的“最重要”。",
+    "step3Title": "化为你自己的表达",
+    "step3Body": "任何一项价值观，你都可以随时改写成符合你心声的措辞 —— 只需点击卡片上的铅笔图标。你的措辞会一路沿用到结果中。",
+    "step4Title": "进度自动保存",
+    "step4Body": "每个选择都会随时保存，所以你可以随时停下，下次从中断的地方继续 —— 任何设备都行。整个过程约需 15–20 分钟。",
+    "begin": "开始",
+    "continue": "继续你的练习",
+    "inProgressNote": "你已经进行了一部分 —— 从中断的地方继续吧。"
+  },
+  "auth": {
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "密码",
+    "passwordPlaceholderSignup": "至少 8 个字符",
+    "forgotLink": "忘记密码？",
+    "showPassword": "显示密码",
+    "hidePassword": "隐藏密码",
+    "signInCta": "登录",
+    "signingIn": "正在登录…",
+    "createAccountCta": "注册账户",
+    "creatingAccount": "正在创建账户…",
+    "newHere": "第一次来？",
+    "createAccountLink": "注册一个账户",
+    "alreadyHaveAccount": "已经有账户了？",
+    "signInLink": "登录",
+    "strengthTooShort": "太短",
+    "strengthWeak": "弱",
+    "strengthFair": "一般",
+    "strengthGood": "良好",
+    "strengthStrong": "很强",
+    "strengthHint": "请使用 12 个以上字符，混合字母、数字和符号。",
+    "loginTitle": "欢迎回来",
+    "loginSubtitle": "登录以继续你的价值观练习。如果你用过本站点的旧版本，你的账户依然有效 —— 可能只需要重新登录一次。",
+    "signupTitle": "创建你的账户",
+    "signupSubtitle": "你的进度会持续保存，所以可以随时暂停，下次从中断的地方继续 —— 任何设备都行。",
+    "resetNotice": "你的密码已重置。请用新密码登录。",
+    "forgotTitle": "重置你的密码",
+    "forgotSubtitle": "输入你注册时使用的邮箱，我们会给你发送一个设置新密码的链接。",
+    "forgotSend": "发送重置链接",
+    "forgotSending": "正在发送…",
+    "forgotSent": "如果该邮箱对应的账户存在，我们已发送一个重置密码的链接。请查看你的收件箱。",
+    "forgotRemembered": "想起来了？",
+    "forgotBackToSignIn": "返回登录",
+    "resetTitle": "设置新密码",
+    "resetInvalid": "此重置链接无效或已过期。请重新申请一个再试。",
+    "resetRequestNew": "申请新的重置链接",
+    "resetSubtitle": "为你的账户输入一个新密码。",
+    "resetNewPasswordLabel": "新密码",
+    "resetSet": "设置新密码",
+    "resetSaving": "正在保存…",
+    "errorInvalidEmail": "请输入有效的邮箱地址",
+    "errorPasswordMin": "密码至少需要 8 个字符",
+    "errorInvalidCredentials": "邮箱或密码不正确",
+    "errorAccountExists": "该邮箱已注册过账户",
+    "errorSomethingWrong": "创建账户时出了点问题",
+    "errorResetExpired": "此重置链接无效或已过期。请重新申请一个。"
+  },
+  "assessment": {
+    "roundOf": "第 {current} 轮，共 {total} 轮",
+    "phaseDiscovering": "探索中",
+    "phaseNarrowing": "筛选中",
+    "answered": "已完成 {count} 项",
+    "prompt": "选出对你<most>最重要</most>和<least>最不重要</least>的价值观。",
+    "editHintPrefix": "你可以随时编辑任何价值观或它的释义 —— 只需点击",
+    "editHintSuffix": "图标。",
+    "editingPast": "这一轮你之前答过了 —— 如果现在觉得不合适，可以改一改。",
+    "milestone25": "已完成四分之一 —— 你正在勾勒出一幅清晰的画面。",
+    "milestone50": "已过半。深呼吸一下 —— 你做得很好。",
+    "milestone75": "已完成四分之三。你的核心价值观正在成形。",
+    "discoveryComplete": "探索阶段完成 —— 接下来这几轮将为你排出最重要的 25 项价值观。",
+    "back": "上一步",
+    "forward": "下一步",
+    "continue": "继续",
+    "saveChange": "保存修改",
+    "saving": "正在保存…",
+    "mostBadge": "最重要",
+    "leastBadge": "最不重要",
+    "mostImportant": "最重要",
+    "leastImportant": "最不重要",
+    "editValueAria": "编辑 {name}",
+    "editValueTitle": "编辑这项价值观或它的释义",
+    "editDialogTitle": "编辑这项价值观",
+    "editDialogDescription": "改写名称或释义，让它用你自己的话来表达。你的措辞会在这项价值观出现的所有地方沿用。",
+    "nameLabel": "名称",
+    "meaningLabel": "它对你意味着什么",
+    "resetToOriginal": "恢复原文",
+    "save": "保存",
+    "valueUpdated": "价值观已更新。",
+    "answerUpdated": "答案已更新。",
+    "somethingWrong": "出了点问题 —— 请重试。",
+    "couldNotSave": "无法保存 —— 请重试。",
+    "invalidationTitle": "你的前 25 项发生了变化",
+    "invalidationBody": "这次修改重新调整了进入你前 25 项的价值观，因此最终排序的那几轮已被重置 —— 你只需重做这 {count} 轮快速选择。其余内容都已保存。",
+    "invalidationContinue": "继续"
+  },
+  "results": {
+    "eyebrow": "你的结果",
+    "title": "对你最重要的十大价值观",
+    "body": "在 {total} 轮选择之后，这些是脱颖而出的价值观。接下来你可以微调它们的措辞，再反思你践行每一项的程度。",
+    "continue": "继续"
+  },
+  "customize": {
+    "title": "用你自己的话表达",
+    "subtitle": "把你的十项价值观改写成符合你心声的措辞 —— 或者原封不动地保留它们。",
+    "nameLabel": "名称",
+    "meaningLabel": "它对你意味着什么",
+    "back": "上一步",
+    "continueToReflection": "继续，进入反思"
+  },
+  "rate": {
+    "title": "你践行每项价值观的程度如何？",
+    "subtitle": "对你的十项价值观，分别评估它在你今天的生活中体现得有多充分 —— 1 表示完全没有，10 表示完全践行。没有标准答案；这只是一张供你反思的快照。",
+    "notLivingYet": "尚未践行",
+    "livingFully": "完全践行",
+    "saveMyValues": "保存我的价值观",
+    "saving": "正在保存…",
+    "livingAria": "你践行“{name}”的程度如何？"
+  },
+  "profile": {
+    "title": "你的价值观",
+    "valuesHeading": "你的价值观",
+    "completedCount": "{count, plural, other {# 次已完成的测评}}",
+    "reassess": "重新评估",
+    "retake": "重新测评",
+    "reassessRetakeHint": "“重新评估”保留你的十项价值观并重新评分，生成一张新快照；“重新测评”则从头开始整个练习。",
+    "inProgressBanner": "你有一个正在进行中的练习。",
+    "continue": "继续",
+    "retakeDialogTitle": "从头开始整个练习？",
+    "retakeDialogBodyActive": "这会舍弃你进行中的答案，开始一段全新的练习。你已完成的结果会保留。",
+    "retakeDialogBodyIdle": "这会从头开始一段全新的练习。你已完成的结果会保留。",
+    "cancel": "取消",
+    "startOver": "重新开始",
+    "myTenValues": "我的十项价值观",
+    "livingIt": "践行程度 {rating}/10",
+    "exportResults": "导出结果",
+    "exporting": "正在导出…",
+    "exportError": "无法导出图片 —— 请重试。",
+    "emptyTitle": "我的主页",
+    "emptyBodyActive": "你有一个正在进行中的练习 —— 从中断的地方继续吧。",
+    "emptyBodyIdle": "你还没有完成价值观练习。",
+    "beginExercise": "开始练习",
+    "continueExercise": "继续你的练习",
+    "savedToast": "你的价值观已保存。随时回来反思或重新评估。",
+    "unchangedToast": "没有需要保存的更改 —— 你最新的快照保持不变。"
+  },
+  "reassess": {
+    "title": "重新评估你的价值观",
+    "subtitle": "重温你的十项价值观：如果你的理解有了变化，可以调整措辞，并重新评估你今天践行每一项的程度。这会保存一张新快照 —— 你之前的结果仍保留在历史记录中。",
+    "nameLabel": "名称",
+    "meaningLabel": "它对你意味着什么",
+    "livingLabel": "你践行它的程度如何？",
+    "livingAria": "你践行“{name}”的程度如何？",
+    "saveSnapshot": "保存新快照",
+    "saving": "正在保存…",
+    "cancel": "取消",
+    "discardTitle": "放弃你的修改？",
+    "discardBody": "你有尚未保存的编辑。现在离开会放弃它们 —— 你之前的快照仍保留在历史记录中。",
+    "keepEditing": "继续编辑",
+    "discard": "放弃"
+  },
+  "consent": {
+    "title": "授权访问",
+    "body": "此应用尚未设置为请求你的授权。如果你是意外来到此页面，请返回你来时的应用。"
+  },
+  "values": {
+    "1": {
+      "name": "接纳",
+      "description": "以本来的样子被接纳"
+    },
+    "2": {
+      "name": "准确",
+      "description": "让我的观点和信念准确无误"
+    },
+    "3": {
+      "name": "成就",
+      "description": "取得重要的成就"
+    },
+    "4": {
+      "name": "冒险",
+      "description": "拥有新鲜而激动人心的体验"
+    },
+    "5": {
+      "name": "魅力",
+      "description": "拥有迷人的外在"
+    },
+    "6": {
+      "name": "权威",
+      "description": "管理他人并对他人负责"
+    },
+    "7": {
+      "name": "自主",
+      "description": "自己做主，独立自决"
+    },
+    "8": {
+      "name": "美",
+      "description": "欣赏身边的美"
+    },
+    "9": {
+      "name": "关怀",
+      "description": "照顾他人"
+    },
+    "10": {
+      "name": "挑战",
+      "description": "迎接艰难的任务与问题"
+    },
+    "11": {
+      "name": "变化",
+      "description": "拥有充满变化与多样的生活"
+    },
+    "12": {
+      "name": "舒适",
+      "description": "拥有愉悦而舒适的生活"
+    },
+    "13": {
+      "name": "承诺",
+      "description": "许下持久而有意义的承诺"
+    },
+    "14": {
+      "name": "同理心",
+      "description": "心怀对他人的关切，并付诸行动"
+    },
+    "15": {
+      "name": "贡献",
+      "description": "为世界留下持久的贡献"
+    },
+    "16": {
+      "name": "合作",
+      "description": "与他人协同共事"
+    },
+    "17": {
+      "name": "礼貌",
+      "description": "待人体贴而有礼"
+    },
+    "18": {
+      "name": "创造力",
+      "description": "拥有新颖而独到的想法"
+    },
+    "19": {
+      "name": "可靠",
+      "description": "值得信赖、靠得住"
+    },
+    "20": {
+      "name": "尽责",
+      "description": "履行我的职责与义务"
+    },
+    "21": {
+      "name": "生态",
+      "description": "与自然环境和谐共处"
+    },
+    "22": {
+      "name": "激越",
+      "description": "拥有充满刺激与新鲜感的生活"
+    },
+    "23": {
+      "name": "忠贞",
+      "description": "在关系中忠诚而真挚"
+    },
+    "24": {
+      "name": "声名",
+      "description": "为人所知、受人认可"
+    },
+    "25": {
+      "name": "家庭",
+      "description": "拥有幸福而充满爱的家庭"
+    },
+    "26": {
+      "name": "健美",
+      "description": "身体强健、体魄出众"
+    },
+    "27": {
+      "name": "灵活",
+      "description": "从容适应新的处境"
+    },
+    "28": {
+      "name": "宽恕",
+      "description": "宽容地对待他人"
+    },
+    "29": {
+      "name": "友谊",
+      "description": "拥有亲密而相互支持的朋友"
+    },
+    "30": {
+      "name": "乐趣",
+      "description": "尽情玩耍，享受乐趣"
+    },
+    "31": {
+      "name": "慷慨",
+      "description": "把我所拥有的给予他人"
+    },
+    "32": {
+      "name": "本真",
+      "description": "言行忠于真实的自己"
+    },
+    "33": {
+      "name": "神的旨意",
+      "description": "寻求并顺从神的旨意"
+    },
+    "34": {
+      "name": "成长",
+      "description": "不断改变与成长"
+    },
+    "35": {
+      "name": "健康",
+      "description": "身体安康、健康无恙"
+    },
+    "36": {
+      "name": "助人",
+      "description": "为他人提供帮助"
+    },
+    "37": {
+      "name": "诚实",
+      "description": "诚实而真诚"
+    },
+    "38": {
+      "name": "希望",
+      "description": "保持积极而乐观的心态"
+    },
+    "39": {
+      "name": "谦逊",
+      "description": "谦虚而不张扬"
+    },
+    "40": {
+      "name": "幽默",
+      "description": "看见自己与世界幽默的一面"
+    },
+    "41": {
+      "name": "独立",
+      "description": "不依赖他人，自由自在"
+    },
+    "42": {
+      "name": "勤勉",
+      "description": "在人生的各项事务中努力把事做好"
+    },
+    "43": {
+      "name": "内心平静",
+      "description": "体验内在的安宁"
+    },
+    "44": {
+      "name": "亲密",
+      "description": "与他人分享内心最深处的体验"
+    },
+    "45": {
+      "name": "正义",
+      "description": "促进人人得到公平平等的对待"
+    },
+    "46": {
+      "name": "学识",
+      "description": "学习并贡献有价值的知识"
+    },
+    "47": {
+      "name": "闲暇",
+      "description": "留出时间放松和享受"
+    },
+    "48": {
+      "name": "被爱",
+      "description": "被亲近的人所爱"
+    },
+    "49": {
+      "name": "去爱",
+      "description": "把爱给予他人"
+    },
+    "50": {
+      "name": "胜任",
+      "description": "在日常事务中得心应手"
+    },
+    "51": {
+      "name": "正念",
+      "description": "清醒而专注地活在当下"
+    },
+    "52": {
+      "name": "适度",
+      "description": "避免过度，找到中庸之道"
+    },
+    "53": {
+      "name": "专一",
+      "description": "拥有一段亲密而充满爱的关系"
+    },
+    "54": {
+      "name": "不随波逐流",
+      "description": "质疑并挑战权威与成规"
+    },
+    "55": {
+      "name": "呵护",
+      "description": "照料并滋养他人"
+    },
+    "56": {
+      "name": "开放",
+      "description": "对新的体验、想法和选择保持开放"
+    },
+    "57": {
+      "name": "秩序",
+      "description": "拥有井然有序、条理分明的生活"
+    },
+    "58": {
+      "name": "热忱",
+      "description": "对想法、活动或人怀有深切的情感"
+    },
+    "59": {
+      "name": "愉悦",
+      "description": "感觉良好"
+    },
+    "60": {
+      "name": "受欢迎",
+      "description": "受到许多人的喜爱"
+    },
+    "61": {
+      "name": "权力",
+      "description": "掌控他人"
+    },
+    "62": {
+      "name": "目标感",
+      "description": "让我的人生有意义、有方向"
+    },
+    "63": {
+      "name": "理性",
+      "description": "以理智和逻辑为指引"
+    },
+    "64": {
+      "name": "务实",
+      "description": "切合实际地看待并行动"
+    },
+    "65": {
+      "name": "担当",
+      "description": "做出并履行负责任的决定"
+    },
+    "66": {
+      "name": "冒险一搏",
+      "description": "敢于冒险、敢于一试"
+    },
+    "67": {
+      "name": "浪漫",
+      "description": "在生活中拥有炽烈而激动人心的爱"
+    },
+    "68": {
+      "name": "自我接纳",
+      "description": "以本来的样子接纳自己"
+    },
+    "69": {
+      "name": "安全",
+      "description": "安全而有保障"
+    },
+    "70": {
+      "name": "自制",
+      "description": "在自己的行为中保持自律"
+    },
+    "71": {
+      "name": "自尊",
+      "description": "对自己感到满意"
+    },
+    "72": {
+      "name": "自我认知",
+      "description": "对自己有深刻而真诚的了解"
+    },
+    "73": {
+      "name": "奉献",
+      "description": "为他人服务"
+    },
+    "74": {
+      "name": "性",
+      "description": "拥有活跃而满意的性生活"
+    },
+    "75": {
+      "name": "简朴",
+      "description": "简单地生活，需求极少"
+    },
+    "76": {
+      "name": "独处",
+      "description": "拥有可以独处、远离他人的时间与空间"
+    },
+    "77": {
+      "name": "灵性",
+      "description": "在灵性上成长与成熟"
+    },
+    "78": {
+      "name": "稳定",
+      "description": "拥有大体保持一致的生活"
+    },
+    "79": {
+      "name": "包容",
+      "description": "接纳并尊重与我不同的人"
+    },
+    "80": {
+      "name": "传统",
+      "description": "遵循受人尊重的过往传承"
+    },
+    "81": {
+      "name": "德行",
+      "description": "过一种品行纯正而高尚的生活"
+    },
+    "82": {
+      "name": "财富",
+      "description": "拥有充裕的金钱"
+    },
+    "83": {
+      "name": "世界和平",
+      "description": "致力于促进世界和平"
+    },
+    "84": {
+      "name": "临在",
+      "description": "全身心投入此时此刻"
+    },
+    "85": {
+      "name": "情绪智慧",
+      "description": "理解并善于与自己的情绪相处"
+    },
+    "86": {
+      "name": "推动者",
+      "description": "在系统与社群中发起积极的变革"
+    },
+    "87": {
+      "name": "言行一致",
+      "description": "让我的行动与最深的价值观相一致"
+    },
+    "88": {
+      "name": "传递",
+      "description": "分享我的灵性体验，惠及他人"
+    },
+    "89": {
+      "name": "敞开心扉",
+      "description": "坦诚地表达我真实的感受与经历"
+    },
+    "90": {
+      "name": "影响力",
+      "description": "为世界创造持久的积极改变"
+    },
+    "91": {
+      "name": "平和从容",
+      "description": "在人生的起伏中保持内心的平衡"
+    },
+    "92": {
+      "name": "社群",
+      "description": "成为一个相互支持、共同成长的群体的一员"
+    },
+    "93": {
+      "name": "真实自我",
+      "description": "活得与我的真实本性相一致"
+    }
+  }
+}

@@ -1,39 +1,44 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
-import { logout } from "@/lib/auth/actions";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
+import { logout } from "@/lib/auth/actions";
 
-export function SiteNav({ email }: { email?: string | null }) {
+export async function SiteNav({ email }: { email?: string | null }) {
+  const t = await getTranslations("nav");
+
   return (
     <nav className="border-b bg-card/60">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="font-display text-lg tracking-tight">
-          Values
+          {t("brand")}
         </Link>
         <div className="flex items-center gap-1">
           {email ? (
             <>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/assessment">Exercise</Link>
+                <Link href="/assessment">{t("exercise")}</Link>
               </Button>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/profile">Results</Link>
+                <Link href="/profile">{t("results")}</Link>
               </Button>
               <form action={logout}>
                 <Button variant="ghost" size="sm" type="submit">
-                  Sign out
+                  {t("signOut")}
                 </Button>
               </form>
             </>
           ) : (
             <>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/login">Sign in</Link>
+                <Link href="/login">{t("signIn")}</Link>
               </Button>
               <Button size="sm" asChild>
-                <Link href="/signup">Get started</Link>
+                <Link href="/signup">{t("getStarted")}</Link>
               </Button>
             </>
           )}
+          <LanguageSwitcher className="ml-1" />
         </div>
       </div>
     </nav>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 // Lightweight strength estimate — length tiers + character-class variety, no
@@ -15,7 +16,13 @@ function scorePassword(password: string): number {
   return Math.min(score, 4);
 }
 
-const LABELS = ["Too short", "Weak", "Fair", "Good", "Strong"] as const;
+const LABEL_KEYS = [
+  "strengthTooShort",
+  "strengthWeak",
+  "strengthFair",
+  "strengthGood",
+  "strengthStrong",
+] as const;
 const COLORS = [
   "bg-destructive",
   "bg-destructive",
@@ -25,6 +32,7 @@ const COLORS = [
 ] as const;
 
 export function PasswordStrength({ password }: { password: string }) {
+  const t = useTranslations("auth");
   const score = scorePassword(password);
   if (!password) return null;
 
@@ -42,7 +50,7 @@ export function PasswordStrength({ password }: { password: string }) {
         ))}
       </div>
       <p className="text-xs text-muted-foreground">
-        {LABELS[score]} · use 12+ characters with a mix of letters, numbers, and symbols.
+        {t(LABEL_KEYS[score])} · {t("strengthHint")}
       </p>
     </div>
   );

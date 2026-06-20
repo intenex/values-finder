@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { completeAssessment } from "../complete-actions";
 import { RateForm } from "./RateForm";
 import { SiteNav } from "@/components/SiteNav";
+import { getValueText } from "@/i18n/values-server";
 import { getActiveAssessment } from "@/lib/assessment";
 import { requireUser } from "@/lib/auth/session";
 import { replay } from "@/lib/engine/replay";
-import { getValue } from "@/lib/values";
 
-export const metadata: Metadata = { title: "Reflect" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return { title: t("reflect") };
+}
 
 export default async function RatePage() {
   const user = await requireUser("/assessment/rate");
@@ -18,8 +22,11 @@ export default async function RatePage() {
   const state = replay(assessment.sets, assessment.choices);
   if (state.phase !== "customize") redirect("/assessment");
 
+  const t = await getTranslations("rate");
+  const valueText = await getValueText();
+
   const items = state.top10.map((id) => {
-    const v = getValue(id);
+    const v = valueText(id);
     const custom = assessment.customizations?.[id];
     return {
       id,
@@ -33,14 +40,8 @@ export default async function RatePage() {
     <>
       <SiteNav email={user.email} />
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-12 sm:px-6">
-        <h1 className="font-display text-3xl tracking-tight">
-          How fully are you living each value?
-        </h1>
-        <p className="mt-3 mb-10 text-muted-foreground">
-          For each of your ten values, rate how completely it shows up in your
-          life today — 1 means not at all, 10 means fully. There are no wrong
-          answers; this is a snapshot to reflect on.
-        </p>
+        <h1 className="font-display text-3xl tracking-tight">{t("title")}</h1>
+        <p className="mt-3 mb-10 text-muted-foreground">{t("subtitle")}</p>
         <RateForm items={items} action={completeAssessment} />
       </main>
     </>

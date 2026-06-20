@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -17,11 +18,13 @@ interface RateFormProps {
   submitLabel?: string;
 }
 
-export function RateForm({ items, action, submitLabel = "Save my values" }: RateFormProps) {
+export function RateForm({ items, action, submitLabel }: RateFormProps) {
+  const t = useTranslations("rate");
   const [ratings, setRatings] = useState<Record<number, number>>(
     Object.fromEntries(items.map((v) => [v.id, v.initial ?? 5])),
   );
   const [submitting, setSubmitting] = useState(false);
+  const label = submitLabel ?? t("saveMyValues");
 
   return (
     <form
@@ -57,18 +60,18 @@ export function RateForm({ items, action, submitLabel = "Save my values" }: Rate
             step={1}
             value={[ratings[v.id]]}
             onValueChange={([val]) => setRatings((r) => ({ ...r, [v.id]: val }))}
-            aria-label={`How fully are you living ${v.name}?`}
+            aria-label={t("livingAria", { name: v.name })}
           />
           <div className="mt-1.5 flex justify-between text-xs text-muted-foreground">
-            <span>Not living it yet</span>
-            <span>Living it fully</span>
+            <span>{t("notLivingYet")}</span>
+            <span>{t("livingFully")}</span>
           </div>
         </div>
       ))}
 
       <div className="flex justify-end">
         <Button type="submit" disabled={submitting} data-testid="save-values">
-          {submitting ? "Saving…" : submitLabel}
+          {submitting ? t("saving") : label}
         </Button>
       </div>
     </form>

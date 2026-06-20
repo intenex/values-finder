@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { and, desc, eq, isNotNull } from "drizzle-orm";
+import { getTranslations } from "next-intl/server";
 import { ProfileView } from "./ProfileView";
 import { SiteNav } from "@/components/SiteNav";
 import { getActiveAssessment } from "@/lib/assessment";
@@ -7,7 +8,10 @@ import { requireUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { userValuesSessions } from "@/lib/db/schema";
 
-export const metadata: Metadata = { title: "Your profile" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return { title: t("profile") };
+}
 
 export default async function ProfilePage({
   searchParams,

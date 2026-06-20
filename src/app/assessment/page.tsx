@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { AssessmentRunner } from "./AssessmentRunner";
 import { SiteNav } from "@/components/SiteNav";
@@ -6,7 +7,10 @@ import { getOrCreateActiveAssessment } from "@/lib/assessment";
 import { requireUser } from "@/lib/auth/session";
 import { replay } from "@/lib/engine/replay";
 
-export const metadata: Metadata = { title: "Your values exercise" };
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return { title: t("exercise") };
+}
 
 export default async function AssessmentPage() {
   const user = await requireUser("/assessment");

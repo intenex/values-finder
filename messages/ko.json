@@ -1,0 +1,584 @@
+{
+  "meta": {
+    "defaultTitle": "가치 — 가장 소중한 것을 발견하세요",
+    "titleTemplate": "{page} · 가치",
+    "description": "당신에게 가장 중요한 열 가지 개인 가치를 발견하고, 순위를 매기고, 돌아보는 안내형 활동입니다.",
+    "signIn": "로그인",
+    "createAccount": "계정 만들기",
+    "resetPassword": "비밀번호 재설정",
+    "chooseNewPassword": "새 비밀번호 설정",
+    "howItWorks": "진행 방식",
+    "exercise": "나의 가치 활동",
+    "top10": "나의 핵심 가치 10가지",
+    "makeThemYours": "나만의 가치로 다듬기",
+    "reflect": "돌아보기",
+    "reassess": "가치 다시 살펴보기",
+    "profile": "내 프로필",
+    "authorize": "접근 허용"
+  },
+  "nav": {
+    "brand": "가치",
+    "exercise": "활동",
+    "results": "결과",
+    "signOut": "로그아웃",
+    "signIn": "로그인",
+    "getStarted": "시작하기"
+  },
+  "language": {
+    "choose": "언어 선택"
+  },
+  "landing": {
+    "eyebrow": "안내형 가치 활동",
+    "title": "당신에게 가장 소중한 것은 무엇인가요?",
+    "body": "{count}가지 가치를 간단한 선택을 거듭하며 살펴보고, 가장 소중한 열 가지를 찾아보세요. 그런 다음 그 가치를 얼마나 충실히 실천하며 살고 있는지 돌아봅니다. 진행 상황은 그때그때 저장되므로 언제든 멈추고 멈췄던 곳에서 다시 이어갈 수 있어요.",
+    "begin": "시작하기",
+    "continue": "이어서 하기",
+    "haveAccount": "이미 계정이 있어요",
+    "footnote": "약 15~20분 소요 · 무료"
+  },
+  "intro": {
+    "eyebrow": "시작하기 전에",
+    "title": "당신에게 가장 소중한 것을 발견하세요",
+    "subtitle": "이 짧은 활동은 간단한 선택을 거듭하며 당신에게 가장 중요한 열 가지 개인 가치를 찾고 순위를 매기도록 도와줍니다.",
+    "step1Title": "한 번에 다섯 개씩 비교하기",
+    "step1Body": "{count}가지 가치 가운데 다섯 개씩 묶인 작은 묶음이 보입니다. 매 라운드마다 가장 소중한 가치 하나와 가장 덜 중요한 가치 하나를 골라 주세요.",
+    "step2Title": "정답은 없어요",
+    "step2Body": "여기 있는 가치는 모두 좋은 가치예요. 무엇이 “옳은가”가 아니라, 지금 이 순간 당신에게 가장 소중한 것이 무엇인지가 중요합니다. 마음 가는 대로 따라가세요. 가장 먼저 고른 것이 당신의 가장 소중한 가치가 됩니다.",
+    "step3Title": "나만의 가치로 만들기",
+    "step3Body": "어떤 가치든 언제든지 당신의 말로 바꿔 표현할 수 있어요. 카드의 연필 아이콘을 누르기만 하면 됩니다. 바꾼 표현은 결과에도 그대로 반영됩니다.",
+    "step4Title": "진행 상황이 저장돼요",
+    "step4Body": "모든 선택은 진행하는 동안 저장되므로 언제든 멈추고 어느 기기에서든 멈췄던 곳에서 바로 다시 시작할 수 있어요. 약 15~20분이 걸립니다.",
+    "begin": "시작하기",
+    "continue": "이어서 하기",
+    "inProgressNote": "진행 중이에요. 멈췄던 곳에서 이어가세요."
+  },
+  "auth": {
+    "emailLabel": "이메일",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "비밀번호",
+    "passwordPlaceholderSignup": "8자 이상",
+    "forgotLink": "비밀번호를 잊으셨나요?",
+    "showPassword": "비밀번호 표시",
+    "hidePassword": "비밀번호 숨기기",
+    "signInCta": "로그인",
+    "signingIn": "로그인 중…",
+    "createAccountCta": "계정 만들기",
+    "creatingAccount": "계정 생성 중…",
+    "newHere": "처음이신가요?",
+    "createAccountLink": "계정 만들기",
+    "alreadyHaveAccount": "이미 계정이 있으신가요?",
+    "signInLink": "로그인",
+    "strengthTooShort": "너무 짧음",
+    "strengthWeak": "약함",
+    "strengthFair": "보통",
+    "strengthGood": "양호",
+    "strengthStrong": "강함",
+    "strengthHint": "글자, 숫자, 기호를 섞어 12자 이상 사용해 보세요.",
+    "loginTitle": "다시 오신 것을 환영해요",
+    "loginSubtitle": "로그인하여 가치 활동을 이어가세요. 이전 버전의 사이트를 이용하셨다면 계정은 그대로 사용할 수 있으며, 다시 로그인만 하시면 됩니다.",
+    "signupTitle": "계정 만들기",
+    "signupSubtitle": "진행 상황이 계속 저장되므로 언제든 멈추고 어느 기기에서든 멈췄던 곳에서 다시 이어갈 수 있어요.",
+    "resetNotice": "비밀번호가 재설정되었습니다. 새 비밀번호로 로그인해 주세요.",
+    "forgotTitle": "비밀번호 재설정",
+    "forgotSubtitle": "가입하신 이메일을 입력하시면 새 비밀번호를 설정할 수 있는 링크를 보내 드릴게요.",
+    "forgotSend": "재설정 링크 보내기",
+    "forgotSending": "보내는 중…",
+    "forgotSent": "해당 이메일로 가입된 계정이 있다면 비밀번호 재설정 링크를 보내 드렸습니다. 받은 편지함을 확인해 주세요.",
+    "forgotRemembered": "기억나셨나요?",
+    "forgotBackToSignIn": "로그인으로 돌아가기",
+    "resetTitle": "새 비밀번호 설정",
+    "resetInvalid": "이 재설정 링크는 유효하지 않거나 만료되었습니다. 새 링크를 요청하여 다시 시도해 주세요.",
+    "resetRequestNew": "새 재설정 링크 요청",
+    "resetSubtitle": "계정에 사용할 새 비밀번호를 입력해 주세요.",
+    "resetNewPasswordLabel": "새 비밀번호",
+    "resetSet": "새 비밀번호 설정",
+    "resetSaving": "저장 중…",
+    "errorInvalidEmail": "올바른 이메일 주소를 입력해 주세요",
+    "errorPasswordMin": "비밀번호는 8자 이상이어야 합니다",
+    "errorInvalidCredentials": "이메일 또는 비밀번호가 올바르지 않습니다",
+    "errorAccountExists": "이 이메일로 가입된 계정이 이미 있습니다",
+    "errorSomethingWrong": "계정을 만드는 중 문제가 발생했습니다",
+    "errorResetExpired": "이 재설정 링크는 유효하지 않거나 만료되었습니다. 새 링크를 요청해 주세요."
+  },
+  "assessment": {
+    "roundOf": "{total} 라운드 중 {current}번째",
+    "phaseDiscovering": "발견하기",
+    "phaseNarrowing": "좁혀가기",
+    "answered": "{count}개 응답함",
+    "prompt": "당신에게 <most>가장 소중한</most> 가치와 <least>가장 덜 중요한</least> 가치를 골라 주세요.",
+    "editHintPrefix": "어떤 가치나 정의든 언제든지 수정할 수 있어요. 다음 아이콘을 누르기만 하면 됩니다:",
+    "editHintSuffix": "아이콘.",
+    "editingPast": "이전에 이 라운드에 답하셨어요. 더 이상 맞지 않게 느껴진다면 바꿔도 됩니다.",
+    "milestone25": "4분의 1 지점이에요. 점점 또렷한 그림이 그려지고 있어요.",
+    "milestone50": "절반까지 왔어요. 잠시 숨을 고르세요. 잘하고 계세요.",
+    "milestone75": "4분의 3을 마쳤어요. 당신의 핵심 가치가 모습을 갖춰가고 있어요.",
+    "discoveryComplete": "발견하기 완료. 이제 마지막 라운드들에서 상위 25가지 가치의 순위를 매깁니다.",
+    "back": "뒤로",
+    "forward": "앞으로",
+    "continue": "계속",
+    "saveChange": "변경 저장",
+    "saving": "저장 중…",
+    "mostBadge": "가장 소중함",
+    "leastBadge": "가장 덜 중요함",
+    "mostImportant": "가장 소중함",
+    "leastImportant": "가장 덜 중요함",
+    "editValueAria": "{name} 수정",
+    "editValueTitle": "이 가치나 정의를 수정하기",
+    "editDialogTitle": "이 가치 수정하기",
+    "editDialogDescription": "당신의 말로 들리도록 이름이나 정의를 바꿔 보세요. 바꾼 표현은 이 가치가 나타나는 모든 곳에 적용됩니다.",
+    "nameLabel": "이름",
+    "meaningLabel": "당신에게 어떤 의미인가요",
+    "resetToOriginal": "원래대로 되돌리기",
+    "save": "저장",
+    "valueUpdated": "가치가 수정되었습니다.",
+    "answerUpdated": "응답이 수정되었습니다.",
+    "somethingWrong": "문제가 발생했어요. 다시 시도해 주세요.",
+    "couldNotSave": "저장하지 못했어요. 다시 시도해 주세요.",
+    "invalidationTitle": "상위 25가지가 바뀌었어요",
+    "invalidationBody": "그 변경으로 상위 25가지에 드는 가치가 다시 정렬되어, 마지막 순위 라운드가 초기화되었습니다. 그 {count}개의 짧은 라운드만 다시 진행하면 됩니다. 나머지는 모두 저장되어 있어요.",
+    "invalidationContinue": "계속"
+  },
+  "results": {
+    "eyebrow": "당신의 결과",
+    "title": "당신에게 가장 소중한 열 가지 가치",
+    "body": "{total} 라운드의 선택 끝에, 이 가치들이 가장 위로 떠올랐습니다. 이제 표현을 다듬은 뒤, 각 가치를 얼마나 충실히 실천하며 살고 있는지 돌아볼 수 있어요.",
+    "continue": "계속"
+  },
+  "customize": {
+    "title": "나만의 가치로 다듬기",
+    "subtitle": "당신의 말로 들리도록 열 가지 가치를 자유롭게 바꿔 보세요. 혹은 지금 그대로 두어도 좋아요.",
+    "nameLabel": "이름",
+    "meaningLabel": "당신에게 어떤 의미인가요",
+    "back": "뒤로",
+    "continueToReflection": "돌아보기로 이어가기"
+  },
+  "rate": {
+    "title": "각 가치를 얼마나 충실히 실천하고 있나요?",
+    "subtitle": "열 가지 가치 각각에 대해, 그 가치가 지금 당신의 삶에 얼마나 온전히 드러나는지 평가해 주세요. 1은 전혀 아님, 10은 온전히 실천함을 뜻합니다. 정답은 없어요. 돌아보기 위한 한 장면일 뿐이에요.",
+    "notLivingYet": "아직 실천하지 못함",
+    "livingFully": "온전히 실천함",
+    "saveMyValues": "내 가치 저장하기",
+    "saving": "저장 중…",
+    "livingAria": "{name}을(를) 얼마나 충실히 실천하고 있나요?"
+  },
+  "profile": {
+    "title": "당신의 가치",
+    "valuesHeading": "당신의 가치",
+    "completedCount": "{count, plural, other {완료한 진단 #회}}",
+    "reassess": "다시 살펴보기",
+    "retake": "다시 진단하기",
+    "reassessRetakeHint": "다시 살펴보기는 열 가지 가치를 그대로 두고 새 시점으로 재평가합니다. 다시 진단하기는 활동 전체를 처음부터 다시 시작합니다.",
+    "inProgressBanner": "진행 중인 활동이 있어요.",
+    "continue": "이어서 하기",
+    "retakeDialogTitle": "활동 전체를 처음부터 다시 시작할까요?",
+    "retakeDialogBodyActive": "진행 중이던 응답을 버리고 새 활동을 시작합니다. 완료된 결과는 그대로 보관됩니다.",
+    "retakeDialogBodyIdle": "처음부터 새 활동을 시작합니다. 완료된 결과는 그대로 보관됩니다.",
+    "cancel": "취소",
+    "startOver": "처음부터 다시",
+    "myTenValues": "나의 열 가지 가치",
+    "livingIt": "실천 정도 {rating}/10",
+    "exportResults": "결과 내보내기",
+    "exporting": "내보내는 중…",
+    "exportError": "이미지를 내보내지 못했어요. 다시 시도해 주세요.",
+    "emptyTitle": "내 프로필",
+    "emptyBodyActive": "진행 중인 활동이 있어요. 멈췄던 곳에서 바로 이어가세요.",
+    "emptyBodyIdle": "아직 가치 활동을 완료하지 않으셨어요.",
+    "beginExercise": "활동 시작하기",
+    "continueExercise": "이어서 하기",
+    "savedToast": "당신의 가치가 저장되었어요. 언제든 다시 찾아와 돌아보거나 살펴보세요.",
+    "unchangedToast": "저장할 변경 사항이 없어요. 최근 기록이 그대로예요."
+  },
+  "reassess": {
+    "title": "가치 다시 살펴보기",
+    "subtitle": "열 가지 가치를 다시 들여다보세요. 이해가 달라졌다면 표현을 손보고, 오늘 각 가치를 얼마나 충실히 실천하고 있는지 다시 평가해 보세요. 새 기록으로 저장되며, 이전 결과는 기록에 그대로 남습니다.",
+    "nameLabel": "이름",
+    "meaningLabel": "당신에게 어떤 의미인가요",
+    "livingLabel": "얼마나 충실히 실천하고 있나요?",
+    "livingAria": "{name}을(를) 얼마나 충실히 실천하고 있나요?",
+    "saveSnapshot": "새 기록 저장하기",
+    "saving": "저장 중…",
+    "cancel": "취소",
+    "discardTitle": "변경 사항을 버릴까요?",
+    "discardBody": "저장하지 않은 수정 내용이 있어요. 지금 나가면 변경 사항이 사라집니다. 이전 기록은 그대로 남아 있어요.",
+    "keepEditing": "계속 수정하기",
+    "discard": "버리기"
+  },
+  "consent": {
+    "title": "접근 허용",
+    "body": "이 애플리케이션은 아직 사용자의 동의를 요청하도록 설정되어 있지 않습니다. 예상치 못하게 이 페이지에 도달하셨다면, 처음 오셨던 앱으로 돌아가 주세요."
+  },
+  "values": {
+    "1": {
+      "name": "수용",
+      "description": "있는 그대로의 나로 받아들여지는 것"
+    },
+    "2": {
+      "name": "정확성",
+      "description": "내 의견과 신념이 정확한 것"
+    },
+    "3": {
+      "name": "성취",
+      "description": "중요한 일을 이루어내는 것"
+    },
+    "4": {
+      "name": "모험",
+      "description": "새롭고 짜릿한 경험을 하는 것"
+    },
+    "5": {
+      "name": "매력",
+      "description": "외적으로 매력적인 것"
+    },
+    "6": {
+      "name": "권위",
+      "description": "다른 사람들을 이끌고 책임지는 것"
+    },
+    "7": {
+      "name": "자율성",
+      "description": "스스로 결정하고 독립적인 것"
+    },
+    "8": {
+      "name": "아름다움",
+      "description": "내 주변의 아름다움을 음미하는 것"
+    },
+    "9": {
+      "name": "보살핌",
+      "description": "다른 사람들을 돌보는 것"
+    },
+    "10": {
+      "name": "도전",
+      "description": "어렵고 까다로운 과제와 문제에 맞서는 것"
+    },
+    "11": {
+      "name": "변화",
+      "description": "변화와 다양함으로 가득한 삶을 사는 것"
+    },
+    "12": {
+      "name": "안락",
+      "description": "편안하고 안락한 삶을 사는 것"
+    },
+    "13": {
+      "name": "헌신",
+      "description": "오래도록 의미 있는 약속을 지켜가는 것"
+    },
+    "14": {
+      "name": "연민",
+      "description": "다른 사람을 향한 마음을 느끼고 실천하는 것"
+    },
+    "15": {
+      "name": "기여",
+      "description": "세상에 오래도록 남을 기여를 하는 것"
+    },
+    "16": {
+      "name": "협력",
+      "description": "다른 사람들과 함께 힘을 모아 일하는 것"
+    },
+    "17": {
+      "name": "예의",
+      "description": "다른 사람을 배려하고 예의를 지키는 것"
+    },
+    "18": {
+      "name": "창의성",
+      "description": "새롭고 독창적인 생각을 떠올리는 것"
+    },
+    "19": {
+      "name": "신뢰성",
+      "description": "믿음직하고 든든한 사람이 되는 것"
+    },
+    "20": {
+      "name": "본분",
+      "description": "내 의무와 책임을 다하는 것"
+    },
+    "21": {
+      "name": "생태",
+      "description": "자연과 조화를 이루며 사는 것"
+    },
+    "22": {
+      "name": "흥분",
+      "description": "짜릿함과 자극으로 가득한 삶을 사는 것"
+    },
+    "23": {
+      "name": "성실함",
+      "description": "관계 속에서 한결같고 진실한 것"
+    },
+    "24": {
+      "name": "명성",
+      "description": "널리 알려지고 인정받는 것"
+    },
+    "25": {
+      "name": "가족",
+      "description": "행복하고 사랑이 넘치는 가정을 이루는 것"
+    },
+    "26": {
+      "name": "체력",
+      "description": "몸이 건강하고 튼튼한 것"
+    },
+    "27": {
+      "name": "유연함",
+      "description": "새로운 상황에 쉽게 적응하는 것"
+    },
+    "28": {
+      "name": "용서",
+      "description": "다른 사람을 너그러이 용서하는 것"
+    },
+    "29": {
+      "name": "우정",
+      "description": "가깝고 든든한 친구들을 곁에 두는 것"
+    },
+    "30": {
+      "name": "즐거움",
+      "description": "마음껏 놀고 즐기는 것"
+    },
+    "31": {
+      "name": "베풂",
+      "description": "내가 가진 것을 다른 사람과 나누는 것"
+    },
+    "32": {
+      "name": "진솔함",
+      "description": "있는 그대로의 나답게 행동하는 것"
+    },
+    "33": {
+      "name": "신의 뜻",
+      "description": "신의 뜻을 구하고 따르는 것"
+    },
+    "34": {
+      "name": "성장",
+      "description": "끊임없이 변화하고 성장하는 것"
+    },
+    "35": {
+      "name": "건강",
+      "description": "몸이 편안하고 건강한 것"
+    },
+    "36": {
+      "name": "도움",
+      "description": "다른 사람에게 도움이 되는 것"
+    },
+    "37": {
+      "name": "정직",
+      "description": "정직하고 진실한 것"
+    },
+    "38": {
+      "name": "희망",
+      "description": "긍정적이고 낙관적인 마음을 잃지 않는 것"
+    },
+    "39": {
+      "name": "겸손",
+      "description": "겸손하고 자신을 내세우지 않는 것"
+    },
+    "40": {
+      "name": "유머",
+      "description": "나 자신과 세상의 유쾌한 면을 볼 줄 아는 것"
+    },
+    "41": {
+      "name": "독립",
+      "description": "다른 사람에게 기대지 않고 자립하는 것"
+    },
+    "42": {
+      "name": "근면",
+      "description": "삶의 과제에 성실하고 충실히 임하는 것"
+    },
+    "43": {
+      "name": "내면의 평화",
+      "description": "마음의 평온을 누리는 것"
+    },
+    "44": {
+      "name": "친밀함",
+      "description": "가장 깊은 속마음을 다른 사람과 나누는 것"
+    },
+    "45": {
+      "name": "정의",
+      "description": "모두를 위한 공정하고 평등한 대우를 추구하는 것"
+    },
+    "46": {
+      "name": "지식",
+      "description": "값진 지식을 배우고 보태는 것"
+    },
+    "47": {
+      "name": "여유",
+      "description": "느긋이 쉬고 즐길 시간을 갖는 것"
+    },
+    "48": {
+      "name": "사랑받음",
+      "description": "가까운 이들에게 사랑받는 것"
+    },
+    "49": {
+      "name": "사랑함",
+      "description": "다른 사람에게 사랑을 주는 것"
+    },
+    "50": {
+      "name": "숙련",
+      "description": "일상의 일들을 능숙하게 해내는 것"
+    },
+    "51": {
+      "name": "마음챙김",
+      "description": "지금 이 순간을 또렷이 알아차리며 사는 것"
+    },
+    "52": {
+      "name": "절제",
+      "description": "지나침을 피하고 균형을 찾는 것"
+    },
+    "53": {
+      "name": "일편단심",
+      "description": "한 사람과 가깝고 사랑이 깊은 관계를 맺는 것"
+    },
+    "54": {
+      "name": "비순응",
+      "description": "권위와 통념에 의문을 던지고 맞서는 것"
+    },
+    "55": {
+      "name": "양육",
+      "description": "다른 사람을 돌보고 보듬어 키우는 것"
+    },
+    "56": {
+      "name": "열린 마음",
+      "description": "새로운 경험과 생각, 가능성에 마음을 여는 것"
+    },
+    "57": {
+      "name": "질서",
+      "description": "잘 정돈되고 짜임새 있는 삶을 사는 것"
+    },
+    "58": {
+      "name": "열정",
+      "description": "생각이나 활동, 사람에 대해 깊은 감정을 느끼는 것"
+    },
+    "59": {
+      "name": "쾌락",
+      "description": "기분 좋게 느끼는 것"
+    },
+    "60": {
+      "name": "인기",
+      "description": "많은 사람에게 호감을 사는 것"
+    },
+    "61": {
+      "name": "권력",
+      "description": "다른 사람을 좌우하는 힘을 갖는 것"
+    },
+    "62": {
+      "name": "목적",
+      "description": "삶에 의미와 방향을 갖는 것"
+    },
+    "63": {
+      "name": "합리성",
+      "description": "이성과 논리에 따라 움직이는 것"
+    },
+    "64": {
+      "name": "현실성",
+      "description": "현실적이고 실용적으로 보고 행동하는 것"
+    },
+    "65": {
+      "name": "책임",
+      "description": "책임 있는 결정을 내리고 실행하는 것"
+    },
+    "66": {
+      "name": "위험 감수",
+      "description": "위험과 기회를 무릅쓰고 도전하는 것"
+    },
+    "67": {
+      "name": "낭만",
+      "description": "삶에 뜨겁고 설레는 사랑을 품는 것"
+    },
+    "68": {
+      "name": "자기 수용",
+      "description": "있는 그대로의 나를 받아들이는 것"
+    },
+    "69": {
+      "name": "안전",
+      "description": "안전하고 든든한 것"
+    },
+    "70": {
+      "name": "자기 통제",
+      "description": "내 행동을 절제 있게 다스리는 것"
+    },
+    "71": {
+      "name": "자존감",
+      "description": "나 자신에 대해 떳떳하게 느끼는 것"
+    },
+    "72": {
+      "name": "자기 이해",
+      "description": "나 자신을 깊고 솔직하게 이해하는 것"
+    },
+    "73": {
+      "name": "봉사",
+      "description": "다른 사람에게 보탬이 되는 것"
+    },
+    "74": {
+      "name": "성생활",
+      "description": "활기차고 만족스러운 성생활을 누리는 것"
+    },
+    "75": {
+      "name": "단순함",
+      "description": "꼭 필요한 것만 두고 단순하게 사는 것"
+    },
+    "76": {
+      "name": "고독",
+      "description": "다른 사람과 떨어져 혼자 있을 시간과 공간을 갖는 것"
+    },
+    "77": {
+      "name": "영성",
+      "description": "영적으로 자라고 성숙해지는 것"
+    },
+    "78": {
+      "name": "안정",
+      "description": "큰 흔들림 없이 한결같은 삶을 사는 것"
+    },
+    "79": {
+      "name": "관용",
+      "description": "나와 다른 사람을 받아들이고 존중하는 것"
+    },
+    "80": {
+      "name": "전통",
+      "description": "소중히 이어온 옛 방식을 따르는 것"
+    },
+    "81": {
+      "name": "덕성",
+      "description": "도덕적으로 바르고 훌륭한 삶을 사는 것"
+    },
+    "82": {
+      "name": "부",
+      "description": "넉넉한 재물을 갖는 것"
+    },
+    "83": {
+      "name": "세계 평화",
+      "description": "세상의 평화를 위해 힘쓰는 것"
+    },
+    "84": {
+      "name": "현존",
+      "description": "지금 이 순간에 온전히 몰입하는 것"
+    },
+    "85": {
+      "name": "감성 지능",
+      "description": "내 감정을 이해하고 능숙하게 다루는 것"
+    },
+    "86": {
+      "name": "촉진자",
+      "description": "체계와 공동체에 긍정적인 변화를 불러일으키는 것"
+    },
+    "87": {
+      "name": "진실성",
+      "description": "내 가장 깊은 가치에 행동을 일치시키는 것"
+    },
+    "88": {
+      "name": "전수",
+      "description": "내 영적 경험을 나누어 다른 사람에게 보탬이 되는 것"
+    },
+    "89": {
+      "name": "취약성 수용",
+      "description": "내 진짜 감정과 경험을 솔직하게 드러내는 것"
+    },
+    "90": {
+      "name": "영향력",
+      "description": "세상에 오래도록 남을 긍정적 변화를 만드는 것"
+    },
+    "91": {
+      "name": "평정심",
+      "description": "삶의 오르내림 속에서도 균형을 잃지 않는 것"
+    },
+    "92": {
+      "name": "공동체",
+      "description": "서로를 지지하며 함께 성장하는 모임의 일원이 되는 것"
+    },
+    "93": {
+      "name": "진정성",
+      "description": "내 본연의 모습에 맞춰 사는 것"
+    }
+  }
+}

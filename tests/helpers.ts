@@ -37,13 +37,16 @@ export async function seedUser(email: string): Promise<string> {
 
 /** Insert a completed old-format session, as the legacy app would have. */
 export async function seedCompletedSession(userId: string): Promise<void> {
+  // Custom names (isCustom: true) so they display verbatim. Non-custom values
+  // re-localize to their canonical name by id, which would otherwise override
+  // these fake "LEGACY VALUE N" labels.
   const topValues = Array.from({ length: 10 }, (_, i) => ({
     id: i + 1,
     name: `LEGACY VALUE ${i + 1}`,
     description: `legacy description ${i + 1}`,
     rating: 6,
     score: 40 - i,
-    isCustom: false,
+    isCustom: true,
   }));
   await pool.query(
     `INSERT INTO user_values_sessions (id, user_id, completed_at, top_values, all_values)
